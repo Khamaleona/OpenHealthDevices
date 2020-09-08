@@ -412,7 +412,7 @@ void setup() {
       HTTPClient http;
       http.begin(serverName);
       int response = http.GET();
-      if(response == 405){
+      if(response == 200){
         http.end();
         //Server name is correct
         startSensor();
