@@ -330,6 +330,7 @@ void startSensor(){
       M5.Lcd.setTextSize(2);
       M5.Lcd.printf("HR: %d bpm\n", (int) valor);
       M5.Lcd.printf("SpO2: %d%%", (int) oxygen);
+      delay(5000); //Waiting 5 seconds to show the measure
       pox.update();
     }
     if(wifiStatus){
