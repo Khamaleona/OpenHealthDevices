@@ -298,6 +298,7 @@ void startSensor(){
   M5.Lcd.setTextColor(WHITE, BLACK);
   M5.Lcd.setTextSize(2);
   M5.Lcd.printf("GSR: %d", gsr_average);
+  delay(5000); //Waiting 5 seconds to show the measure
   
   if(wifiStatus){
     sendData(gsr_average, timeStringBuff);
