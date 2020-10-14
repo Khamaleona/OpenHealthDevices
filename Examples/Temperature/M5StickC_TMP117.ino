@@ -291,7 +291,7 @@ void startSensor(){
     M5.Lcd.setCursor(0, 6, 2);
     M5.Lcd.setTextColor(WHITE, BLACK);
     M5.Lcd.setTextSize(1);
-    M5.Lcd.printf("SENSOR IS NOT WORKING! RESTARTING...", tempC);
+    M5.Lcd.printf("SENSOR IS NOT WORKING! RESTARTING...");
     delay(5000);
     ESP.restart();
   }
