@@ -53,9 +53,8 @@ Remember <b>sensorGenerator.py</b> file we have mentioned before? Here we have i
 
 <ul>
   <li>Open a terminal and run <i>tools.py</i> (you only need to do this the first time).</li>
-  <li>Run sensorGenerator.py and answer every question as detailed.</li>
-  <li>Build your circuit and connect them to your computer (here we have used the M5Stick-C board in our examples).</li>
-  <li>Finally, run uploadGeneration.py</li>
+  <li>If you want to upload code to board, build your circuit and connect them to your computer (here we have used the M5Stick-C board in our examples).</li>
+  <li>Finally, run sensorGenerator.py and answer every question as detailed (it will run uploadGeneration.py too).</li>
 </ul>
 
 If everything was right, you will have your own medical device. Easy peasy lemon squeezy!
