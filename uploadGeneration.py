@@ -33,7 +33,8 @@ else:
             for port in result:
                 print("\t- Port " + port + " available")
             os.system('cmd /c "arduino-cli compile --fqbn esp32:esp32:m5stick-c "' + str(sys.argv[1]) +
-                      '" && arduino-cli upload -p "' + str(result[0]) + '" --fqbn esp32:esp32:m5stick-c "' + str(sys.argv[1]))
+                      '" && arduino-cli upload -p "' + str(result[0]) + '" --fqbn esp32:esp32:m5stick-c "' +
+                      str(sys.argv[1]))
         else:
             commands = ["arduino-cli compile --fqbn esp32:esp32:m5stick-c "+str(sys.argv[1]), "arduino-cli upload -p "+ str(result[0]) + " --fqbn esp32:esp32:m5stick-c " + str(sys.argv[1])]
             for command in commands:

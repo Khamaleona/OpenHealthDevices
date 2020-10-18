@@ -11,9 +11,14 @@
     "sl3": "#include <WebServer.h>",
     "sl4": "#include <EEPROM.h>"
   },
+  "sensor_description": {
+    "tmp117" : "Temperature",
+    "max30100" : "Heart rate and SpO2",
+    "gsr" : "Galvanic Skin Response"
+  },
   "sensor_lib": {
-    "s0" : "#include <SparkFun_TMP117.h>",
-    "s1" : "#include \"MAX30100_PulseOximeter.h\"",
+    "tmp117" : "#include <SparkFun_TMP117.h>",
+    "max30100" : "#include \"MAX30100_PulseOximeter.h\"",
     "other" : "///// You should include your sensor library here"
   },
   "constants": {
@@ -21,14 +26,14 @@
     "c1": "#define TIME_TO_SLEEP "
   },
   "sensor_vars": {
-    "s0": "TMP117 temp;",
-    "s1": {
+    "tmp117": "TMP117 temp;",
+    "max30100": {
       "v0": "#define REPORTING_PERIOD_MS 1000",
       "v1": "PulseOximeter pox;",
       "v2": "uint32_t tsLastReport = 0;",
       "v3": "int inicio=0;"
     },
-    "s2": {
+    "gsr": {
       "v0": "const int GSR=36; //pin",
       "v1": "int sensorValue=0;",
       "v2": "int gsr_average=0;"
@@ -75,19 +80,19 @@
       "f0": "void printLocalTime(){ \n\tstruct tm timeinfo; \n\tif(!getLocalTime(&timeinfo)){ \n\t\tSerial.println(\"Failed to obtain time\"); \n\t\treturn;\n\t} \n\tstrftime(timeStringBuff, sizeof(timeStringBuff), \"%Y-%m-%d %H:%M:%S\", &timeinfo); \n}",
       "sensors": {
         "titles": {
-          "title0": "void sendData(float tempC, char timedata[]){ \t",
-          "title1": "void sendData(uint8_t heartRate, uint8_t spo2, char timedata[]){ \t",
-          "title2": "void sendData(int average, char timedata[]){ \t",
-          "title3": "void sendData(int measure, char timedata[]){ \t"
+          "tmp117": "void sendData(float tempC, char timedata[]){ \t",
+          "max30100": "void sendData(uint8_t heartRate, uint8_t spo2, char timedata[]){ \t",
+          "gsr": "void sendData(int average, char timedata[]){ \t",
+          "other": "void sendData(int measure, char timedata[]){ \t"
         },
         "jsons": {
-          "json0": "\tString json = \"{\\\"sensor\\\": \\\"0\\\",\"; \n\t\tjson += \"\\\"value\\\": \\\"\"; \n\t\tjson += String(tempC); \n\t\tjson += \"\\\",\"; \n\t\tjson += \"\\\"date\\\": \\\"\"; \n\t\tjson += timedata; \n\t\tjson += \"\\\"}\"; \n\t",
-          "json1": "\tString json = \"{\\\"sensor\\\": \\\"1\\\",\"; \n\t\tjson += \"\\\"value\\\": \\\"\"; \n\t\tjson += String(average); \n\t\tjson += \"\\\",\"; \n\t\tjson += \"\\\"date\\\": \\\"\"; \n\t\tjson += timedata; \n\t\tjson += \"\\\"}\"; \n\t",
-          "json2": "\tString json = \"{\\\"sensor\\\": \\\"2\\\",\"; \n\t\tjson += \"\\\"value\\\": \\\"\"; \n\t\tjson += String(heartRate); \n\t\tjson += \"\\\",\"; \n\t\tjson += \"\\\"date\\\": \\\"\"; \n\t\tjson += timedata; \n\t\tjson += \"\\\"}\"; \n\t",
-          "json3": "\tjson = \"{\\\"sensor\\\": \\\"3\\\",\"; \n\t\tjson += \"\\\"value\\\": \\\"\"; \n\t\tjson += String(spo2); \n\t\tjson += \"\\\",\"; \n\t\tjson += \"\\\"date\\\": \\\"\"; \n\t\tjson += timedata; \n\t\tjson += \"\\\"}\"; \n\t",
-          "json4": "\tString json = \"{\\\"sensor\\\": \\\"X\\\",\"; \n\t\tjson += \"\\\"value\\\": \\\"\"; \n\t\tjson += String(measure); \n\t\tjson += \"\\\",\"; \n\t\tjson += \"\\\"date\\\": \\\"\"; \n\t\tjson += timedata; \n\t\tjson += \"\\\"}\"; \n\t"
+          "tmp117": "\tString json = \"{\\\"sensor\\\": \\\"0\\\",\"; \n\t\tjson += \"\\\"value\\\": \\\"\"; \n\t\tjson += String(tempC); \n\t\tjson += \"\\\",\"; \n\t\tjson += \"\\\"date\\\": \\\"\"; \n\t\tjson += timedata; \n\t\tjson += \"\\\"}\"; \n\t",
+          "gsr": "\tString json = \"{\\\"sensor\\\": \\\"1\\\",\"; \n\t\tjson += \"\\\"value\\\": \\\"\"; \n\t\tjson += String(average); \n\t\tjson += \"\\\",\"; \n\t\tjson += \"\\\"date\\\": \\\"\"; \n\t\tjson += timedata; \n\t\tjson += \"\\\"}\"; \n\t",
+          "max30100a": "\tString json = \"{\\\"sensor\\\": \\\"2\\\",\"; \n\t\tjson += \"\\\"value\\\": \\\"\"; \n\t\tjson += String(heartRate); \n\t\tjson += \"\\\",\"; \n\t\tjson += \"\\\"date\\\": \\\"\"; \n\t\tjson += timedata; \n\t\tjson += \"\\\"}\"; \n\t",
+          "max30100b": "\tjson = \"{\\\"sensor\\\": \\\"3\\\",\"; \n\t\tjson += \"\\\"value\\\": \\\"\"; \n\t\tjson += String(spo2); \n\t\tjson += \"\\\",\"; \n\t\tjson += \"\\\"date\\\": \\\"\"; \n\t\tjson += timedata; \n\t\tjson += \"\\\"}\"; \n\t",
+          "other": "\tString json = \"{\\\"sensor\\\": \\\"X\\\",\"; \n\t\tjson += \"\\\"value\\\": \\\"\"; \n\t\tjson += String(measure); \n\t\tjson += \"\\\",\"; \n\t\tjson += \"\\\"date\\\": \\\"\"; \n\t\tjson += timedata; \n\t\tjson += \"\\\"}\"; \n\t"
         },
-        "s2": "\tpox.begin();"
+        "max30100": "\tpox.begin();"
       },
       "common": {
         "c0": "\tHTTPClient http; \t",
@@ -118,20 +123,20 @@
         "f3": "\tconfigTime(gmtOffset_sec, daylightOffset_sec, ntpServer); \n\tprintLocalTime(); \n\t"
       },
       "initialize": {
-        "i0": "\tfloat tempC; \n\tSerial.println(\"Starting TMP117...\"); \n\tif(temp.begin()){ \n\t\tSerial.println(\"TMP117 OK\"); \n\t}else{ \n\t\tSerial.println(\"TMP117 ERROR\"); \n\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\tM5.Lcd.setTextSize(1); \n\t\tM5.Lcd.printf(\"SENSOR IS NOT WORKING! RESTARTING...\", tempC); \n\t\tdelay(5000); \n\t\tESP.restart(); \n\t} \n\tif(temp.dataReady()){\n\t\ttempC = temp.readTempC(); \n\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\tM5.Lcd.setTextSize(2); \n\t\tM5.Lcd.printf(\"Temp: %2.2fC\", tempC); \n\t\t delay(5000); //Waiting 5 seconds to show the measure \n\t\t",
-        "i1": "\tuint8_t value = 0; \n\tuint8_t oxygen = 0; \n\tSerial.println(\"Starting MAX30100...\"); \n\tif(!pox.begin()){ \n\t\tSerial.println(\"MAX30100 ERROR\"); \n\t}else{\n\t\tSerial.println(\"MAX30100 OK\"); \n\t} \n\tint initial = millis(); \n\tpox.update(); \n\tif(millis() - tsLastReport>REPORTING_PERIOD_MS){ \n\t\twhile(millis() - initial <= 20000){ \n\t\t\tvalue = pox.getHeartRate(); \n\t\t\toxygen = pox.getSpO2(); \n\t\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\t\tM5.Lcd.setTextSize(2); \n\t\t\tM5.Lcd.printf(\"HR: %d bpm\\n\", (int) value); \n\t\t\tM5.Lcd.printf(\"SpO2: %d%%\", (int) oxygen); \n\t\t\tpox.update(); \n\t\t} \n\t\t",
-        "i2": "\tlong sum=0; \n\tSerial.println(\"Starting reading GSR...\"); \n\tfor(int i=0;i<10;i++){ \n\t\tsensorValue=analogRead(GSR); \n\t\tsum += sensorValue; \n\t\tdelay(100); \n\t} \n\tgsr_average = sum/10; \n\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\tM5.Lcd.setCursor(0, 6, 2); \n\tM5.Lcd.setTextColor(WHITE, BLACK); \n\tM5.Lcd.setTextSize(2); \n\tM5.Lcd.printf(\"GSR: %d\", gsr_average); \n\t",
-        "i3": "\tint var=0; //Modify for your sensor measures \n\t/*\n\tHere you should put the function that performs the measurements \n\t*/\n\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\tM5.Lcd.setCursor(0, 6, 2); \n\tM5.Lcd.setTextColor(WHITE, BLACK); \n\tM5.Lcd.setTextSize(2); \n\tM5.Lcd.printf(\"Value: %d\", var);\n\tdelay(5000); //Waiting 5 seconds to show the measure \n\t"
+        "tmp117": "\tfloat tempC; \n\tSerial.println(\"Starting TMP117...\"); \n\tif(temp.begin()){ \n\t\tSerial.println(\"TMP117 OK\"); \n\t}else{ \n\t\tSerial.println(\"TMP117 ERROR\"); \n\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\tM5.Lcd.setTextSize(1); \n\t\tM5.Lcd.printf(\"SENSOR IS NOT WORKING! RESTARTING...\", tempC); \n\t\tdelay(5000); \n\t\tESP.restart(); \n\t} \n\tif(temp.dataReady()){\n\t\ttempC = temp.readTempC(); \n\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\tM5.Lcd.setTextSize(2); \n\t\tM5.Lcd.printf(\"Temp: %2.2fC\", tempC); \n\t\t delay(5000); //Waiting 5 seconds to show the measure \n\t\t",
+        "max30100": "\tuint8_t value = 0; \n\tuint8_t oxygen = 0; \n\tSerial.println(\"Starting MAX30100...\"); \n\tif(!pox.begin()){ \n\t\tSerial.println(\"MAX30100 ERROR\"); \n\t}else{\n\t\tSerial.println(\"MAX30100 OK\"); \n\t} \n\tint initial = millis(); \n\tpox.update(); \n\tif(millis() - tsLastReport>REPORTING_PERIOD_MS){ \n\t\twhile(millis() - initial <= 20000){ \n\t\t\tvalue = pox.getHeartRate(); \n\t\t\toxygen = pox.getSpO2(); \n\t\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\t\tM5.Lcd.setTextSize(2); \n\t\t\tM5.Lcd.printf(\"HR: %d bpm\\n\", (int) value); \n\t\t\tM5.Lcd.printf(\"SpO2: %d%%\", (int) oxygen); \n\t\t\tpox.update(); \n\t\t} \n\t\t",
+        "gsr": "\tlong sum=0; \n\tSerial.println(\"Starting reading GSR...\"); \n\tfor(int i=0;i<10;i++){ \n\t\tsensorValue=analogRead(GSR); \n\t\tsum += sensorValue; \n\t\tdelay(100); \n\t} \n\tgsr_average = sum/10; \n\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\tM5.Lcd.setCursor(0, 6, 2); \n\tM5.Lcd.setTextColor(WHITE, BLACK); \n\tM5.Lcd.setTextSize(2); \n\tM5.Lcd.printf(\"GSR: %d\", gsr_average); \n\t",
+        "other": "\tint var=0; //Modify for your sensor measures \n\t/*\n\tHere you should put the function that performs the measurements \n\t*/\n\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\tM5.Lcd.setCursor(0, 6, 2); \n\tM5.Lcd.setTextColor(WHITE, BLACK); \n\tM5.Lcd.setTextSize(2); \n\tM5.Lcd.printf(\"Value: %d\", var);\n\tdelay(5000); //Waiting 5 seconds to show the measure \n\t"
       },
       "webserver": {
-        "w0": "\tif(wifiStatus){ \n\t\t\tsendData(tempC, timeStringBuff); \n\t\t}else{ \n\t\t\tSerial.println(\"Wifi is disconnected\"); \n\t\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\t\tM5.Lcd.setTextSize(2); \n\t\t\tM5.Lcd.printf(\"Wifi is OFF\"); \n\t\t} \n\t",
-        "w1": "\tif(wifiStatus){ \n\t\t\tsendData(value, oxygen, timeStringBuff); \n\t\t}else{ \n\t\t\tSerial.println(\"Wifi is disconnected\"); \n\t\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\t\tM5.Lcd.setTextSize(2); \n\t\t\tM5.Lcd.printf(\"Wifi is OFF\"); \n\t\t} \n\t\t",
-        "w2": "\tif(wifiStatus){ \n\t\tsendData(gsr_average, timeStringBuff); \n\t}else{ \n\t\tSerial.println(\"Wifi is disconnected\"); \n\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\tM5.Lcd.setTextSize(2); \n\t\tM5.Lcd.printf(\"Wifi is OFF\"); \n\t} \n\t",
-        "w3": "\tif(wifiStatus){ \n\t\tsendData(var, timeStringBuff); \n\t}else{ \n\t\tSerial.println(\"Wifi is disconnected\"); \n\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\tM5.Lcd.setTextSize(2); \n\t\tM5.Lcd.printf(\"Wifi is OFF\"); \n\t} \n\t"
+        "tmp117": "\tif(wifiStatus){ \n\t\t\tsendData(tempC, timeStringBuff); \n\t\t}else{ \n\t\t\tSerial.println(\"Wifi is disconnected\"); \n\t\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\t\tM5.Lcd.setTextSize(2); \n\t\t\tM5.Lcd.printf(\"Wifi is OFF\"); \n\t\t} \n\t",
+        "max30100": "\tif(wifiStatus){ \n\t\t\tsendData(value, oxygen, timeStringBuff); \n\t\t}else{ \n\t\t\tSerial.println(\"Wifi is disconnected\"); \n\t\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\t\tM5.Lcd.setTextSize(2); \n\t\t\tM5.Lcd.printf(\"Wifi is OFF\"); \n\t\t} \n\t\t",
+        "gsr": "\tif(wifiStatus){ \n\t\tsendData(gsr_average, timeStringBuff); \n\t}else{ \n\t\tSerial.println(\"Wifi is disconnected\"); \n\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\tM5.Lcd.setTextSize(2); \n\t\tM5.Lcd.printf(\"Wifi is OFF\"); \n\t} \n\t",
+        "other": "\tif(wifiStatus){ \n\t\tsendData(var, timeStringBuff); \n\t}else{ \n\t\tSerial.println(\"Wifi is disconnected\"); \n\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\tM5.Lcd.setTextSize(2); \n\t\tM5.Lcd.printf(\"Wifi is OFF\"); \n\t} \n\t"
       },
       "body": {
         "b0": "\t}\n\t",
-        "b1": "\ttsLastReport = millis(); \n\t\tpox.update(); \n\t} \n\t",
+        "max30100": "\ttsLastReport = millis(); \n\t\tpox.update(); \n\t} \n\t",
         "b2": "\tdelay(TIME_TO_SLEEP*1000); \n\t"
       }
     },

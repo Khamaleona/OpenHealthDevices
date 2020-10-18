@@ -4,26 +4,8 @@
   },
   "sensors_list" : {
     "list_init" : "These are the available sensors:",
-    "elements" : [
-      {
-        "name": "TMP117",
-        "description": "Temperature"
-      },
-      {
-        "name": "MAX30100",
-        "description": "Heart Rate and SPO2"
-      },
-      {
-        "name": "GroveGSR",
-        "description": "Galvanic Skin Response"
-      },
-      {
-        "name": "GeneralSensor",
-        "description": "General Sensor Template"
-      }
-    ],
-    "i0" : "Indicate which one do you want to generate (1, 2 or 3)...",
-    "i1" : "In case you want to use a different sensor, write 4. We will provide you a general template!"
+    "i0" : "Indicate which one do you want to generate (1, 2, 3)...",
+    "i1" : "In case you want to use a different sensor, write 0. We will provide you a general template!"
   },
   "code_questions" : {
     "measures" : {
@@ -37,6 +19,10 @@
       "q0": "In order to make the initial configuration easier, we suggest that you use a Captive Portal. This will set up a Web Portal where you could introduce information such as wifi credentials and web server data trough your mobile phone",
       "q1": "Do you want to use a Captive Portal? Yes (0) or No (1)"
     }
+  },
+  "complete_process": {
+    "q0": "Do you want to complete the process and upload the script in your board?",
+    "q1": "Yes (0), No (1)"
   },
   "error": "ERROR! Please type the correct option"
 }

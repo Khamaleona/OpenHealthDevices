@@ -1,7 +1,24 @@
 import json
 import jinja2
+import os
+import sys
+
+def getSensorFromOption():
+    i = 1
+    sensors = []
+
+    for sensor in os.listdir("./Examples"):
+        for file in os.listdir("./Examples/" + sensor):
+            if file.endswith(".ino"):
+                fileName = file[9:-4].lower()
+                print(str(i) + ") " + file + " - " + json_c['sensor_description'][fileName])
+                sensors.insert(i-1, fileName)
+        i += 1
+
+    return sensors
 
 # load json from file
+
 with open('questions.json') as json_file:
     json_q = json.load(json_file)
 
@@ -26,30 +43,28 @@ for lib in json_c['general_lib']:
 correct = False
 print(json_q['introduction']['welcome'])
 print(json_q['sensors_list']['list_init'])
-i=1
-for fileEntry in json_q['sensors_list']['elements']:
-    print("\t(" + str(i) + ") " + fileEntry['name'] + ": " + fileEntry['description'])
-    i+=1
 
 while not correct:
-    print(json_q['sensors_list']['i0'] + "\n")
+
+    sensors = getSensorFromOption()
+    print(json_q['sensors_list']['i0'])
     option = input(json_q['sensors_list']['i1'])
-    if 1 <= int(option) <= 4:
-        sensorType = int(option)
+
+    if 0 <= int(option) <= len(sensors):
+        if int(option) > 0:
+            option = sensors[int(option) - 1]
+            sensorType = option
+        else:
+            option = "other"
+            sensorType = "other"
         correct = True
-        if int(option) == 1:
-            libraries.append(json_c['sensor_lib']['s0'])
-            codeVars.append(json_c['sensor_vars']['s0'])
-        elif int(option) == 2:
-            libraries.append(json_c['sensor_lib']['s1'])
-            for a in json_c['sensor_vars']['s1']:
-                codeVars.append(json_c['sensor_vars']['s1'][a])
-        elif int(option) == 3:
-            for a in json_c['sensor_vars']['s2']:
-                codeVars.append(json_c['sensor_vars']['s2'][a])
-        elif int(option) == 4:
-            libraries.append(json_c['sensor_lib']['other'])
-            codeVars.append(json_c['sensor_vars']['other'])
+        if option != "gsr":
+            libraries.append(json_c['sensor_lib'][option])
+        if option != "tmp117" and option != "other":
+            for a in json_c['sensor_vars'][option]:
+                codeVars.append(json_c['sensor_vars'][option][a])
+        else:
+            codeVars.append(json_c['sensor_vars'][option])
     else:
         print(json_q["error"])
 
@@ -107,77 +122,42 @@ if remoteStore:
             print(json_q["error"])
 
     code.append(json_c['code_blocks']['remote_server']['f0'])
-    if sensorType == 1:
-        code.append(json_c['code_blocks']['remote_server']['sensors']['titles']['title0'])
-        code.append(json_c['code_blocks']['remote_server']['common']['c0'])
-        code.append(json_c['code_blocks']['remote_server']['common']['c1'])
-        code.append(json_c['code_blocks']['remote_server']['sensors']['jsons']['json0'])
-        code.append(json_c['code_blocks']['remote_server']['common']['c2'])
-        code.append(json_c['code_blocks']['remote_server']['common']['c3'])
-    elif sensorType == 2:
-        code.append(json_c['code_blocks']['remote_server']['sensors']['titles']['title1'])
-        code.append(json_c['code_blocks']['remote_server']['common']['c0'])
-        code.append(json_c['code_blocks']['remote_server']['common']['c1'])
-        code.append(json_c['code_blocks']['remote_server']['sensors']['jsons']['json2'])
+    code.append(json_c['code_blocks']['remote_server']['sensors']['titles'][sensorType])
+    code.append(json_c['code_blocks']['remote_server']['common']['c0'])
+    code.append(json_c['code_blocks']['remote_server']['common']['c1'])
+    if sensorType == "max30100":
+        code.append(json_c['code_blocks']['remote_server']['sensors']['jsons']['max30100a'])
         code.append(json_c['code_blocks']['remote_server']['common']['c2'])
         code.append(json_c['code_blocks']['remote_server']['common']['c1'])
-        code.append(json_c['code_blocks']['remote_server']['sensors']['jsons']['json3'])
+        code.append(json_c['code_blocks']['remote_server']['sensors']['jsons']['max30100b'])
         code.append(json_c['code_blocks']['remote_server']['common']['c4'])
         code.append(json_c['code_blocks']['remote_server']['sensors']['s2'])
-        code.append(json_c['code_blocks']['remote_server']['common']['c3'])
-    elif sensorType == 3:
-        code.append(json_c['code_blocks']['remote_server']['sensors']['titles']['title2'])
-        code.append(json_c['code_blocks']['remote_server']['common']['c0'])
-        code.append(json_c['code_blocks']['remote_server']['common']['c1'])
-        code.append(json_c['code_blocks']['remote_server']['sensors']['jsons']['json1'])
-        code.append(json_c['code_blocks']['remote_server']['common']['c2'])
-        code.append(json_c['code_blocks']['remote_server']['common']['c3'])
     else:
-        code.append(json_c['code_blocks']['remote_server']['sensors']['titles']['title3'])
-        code.append(json_c['code_blocks']['remote_server']['common']['c0'])
-        code.append(json_c['code_blocks']['remote_server']['common']['c1'])
-        code.append(json_c['code_blocks']['remote_server']['sensors']['jsons']['json4'])
+        code.append(json_c['code_blocks']['remote_server']['sensors']['jsons'][sensorType])
         code.append(json_c['code_blocks']['remote_server']['common']['c2'])
         code.append(json_c['code_blocks']['remote_server']['common']['c3'])
 
 code.append(json_c['code_blocks']['start_sensor']['common']['f0'])
 if remoteStore:
     code.append(json_c['code_blocks']['start_sensor']['common']['f3'])
-if sensorType == 1:
-    code.append(json_c['code_blocks']['start_sensor']['initialize']['i0'])
-    if remoteStore:
-        code.append(json_c['code_blocks']['start_sensor']['webserver']['w0'])
-    if frecuency > 0:
+
+code.append(json_c['code_blocks']['start_sensor']['initialize'][sensorType])
+if remoteStore:
+    code.append(json_c['code_blocks']['start_sensor']['webserver'][sensorType])
+if frecuency > 0:
+    if sensorType != "gsr":
         code.append(json_c['code_blocks']['start_sensor']['common']['f1'])
+    else:
+        code.append(json_c['code_blocks']['start_sensor']['common']['f1'])
+if sensorType == "tmp117":
     code.append(json_c['code_blocks']['start_sensor']['body']['b0'])
-    code.append(json_c['code_blocks']['start_sensor']['common']['f2'])
-elif sensorType == 2:
-    code.append(json_c['code_blocks']['start_sensor']['initialize']['i1'])
-    if remoteStore:
-        code.append(json_c['code_blocks']['start_sensor']['webserver']['w1'])
-    code.append(json_c['code_blocks']['start_sensor']['body']['b1'])
-    if frecuency > 0:
-        code.append(json_c['code_blocks']['start_sensor']['common']['f1'])
-    code.append(json_c['code_blocks']['start_sensor']['common']['f2'])
-elif sensorType == 3:
-    code.append(json_c['code_blocks']['start_sensor']['initialize']['i2'])
-    if remoteStore:
-        code.append(json_c['code_blocks']['start_sensor']['webserver']['w2'])
-    if frecuency > 0:
-        code.append(json_c['code_blocks']['start_sensor']['body']['b2'])
-    code.append(json_c['code_blocks']['start_sensor']['common']['f2'])
-else:
-    code.append(json_c['code_blocks']['start_sensor']['initialize']['i3'])
-    if remoteStore:
-        code.append(json_c['code_blocks']['start_sensor']['webserver']['w3'])
-    if frecuency > 0:
-        code.append(json_c['code_blocks']['start_sensor']['common']['f1'])
-    code.append(json_c['code_blocks']['start_sensor']['common']['f2'])
+code.append(json_c['code_blocks']['start_sensor']['common']['f2'])
 
 code.append(json_c['code_blocks']['setup']['init'])
 if captivePortal:
     code.append(json_c['code_blocks']['setup']['portal'])
 code.append(json_c['code_blocks']['setup']['end'])
+
 code.append(json_c['code_blocks']['loop']['init'])
 if captivePortal:
     code.append(json_c['code_blocks']['loop']['portal'])
@@ -192,7 +172,7 @@ y = json.dumps(all)
 y = json.loads(y)
 #print(y)
 
-outputFileName = "M5StickC_" + json_q['sensors_list']['elements'][sensorType-1]['name'] + ".ino"
+outputFileName = "M5StickC_" + sensorType + ".ino"
 result = jinja2.Environment(loader=jinja2.FileSystemLoader('./')).get_template('sensor-template.ino')
 result = result.render(templ=y)
 #print(result)
@@ -200,3 +180,19 @@ result = result.render(templ=y)
 outFile = open(outputFileName, "w")
 outFile.write(result)
 outFile.close()
+
+correct = False
+while not correct:
+    print(json_q["complete_process"]["q0"])
+    option = input(json_q["complete_process"]["q1"])
+    if int(option)==0:
+        correct = True
+        command = "python uploadGeneration.py " + outputFileName
+        if sys.platform.startswith("win"):
+            os.system('cmd /c "' + command + '"')
+        elif sys.platform.startswith("linux") or sys.platform.startswith("cygwin"):
+            os.system("python ./uploadGeneration.py " + outputFileName)
+        else:
+            raise EnvironmentError("Unsupported platform")
+    elif int(option) > 1:
+        print(json_q["error"])
