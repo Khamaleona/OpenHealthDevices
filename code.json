@@ -19,6 +19,7 @@
   "sensor_lib": {
     "tmp117" : "#include <SparkFun_TMP117.h>",
     "max30100" : "#include \"MAX30100_PulseOximeter.h\"",
+    "gsr" : "",
     "other" : "///// You should include your sensor library here"
   },
   "constants": {
@@ -26,7 +27,9 @@
     "c1": "#define TIME_TO_SLEEP "
   },
   "sensor_vars": {
-    "tmp117": "TMP117 temp;",
+    "tmp117": {
+      "v0": "TMP117 temp;"
+    },
     "max30100": {
       "v0": "#define REPORTING_PERIOD_MS 1000",
       "v1": "PulseOximeter pox;",
@@ -38,7 +41,9 @@
       "v1": "int sensorValue=0;",
       "v2": "int gsr_average=0;"
     },
-    "other": "///// Here you must indicate you sensor object and related vars"
+    "other": {
+      "v0": "///// Here you must indicate you sensor object and related vars"
+    }
   },
   "settings": {
     "captive_portal": {

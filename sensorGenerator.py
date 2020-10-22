@@ -3,6 +3,7 @@ import jinja2
 import os
 import sys
 
+
 def getSensorFromOption():
     i = 1
     sensors = []
@@ -17,7 +18,6 @@ def getSensorFromOption():
 
     return sensors
 
-# load json from file
 
 with open('questions.json') as json_file:
     json_q = json.load(json_file)
@@ -25,15 +25,14 @@ with open('questions.json') as json_file:
 with open('code.json') as json_file:
     json_c = json.load(json_file)
 
-# Load and make questions
+
 libraries = []
 constants = []
 codeVars = []
 settings = []
 code = []
-
 remoteStore = False
-frecuency = False
+period = False
 captivePortal = False
 sensorType = 0
 
@@ -51,20 +50,11 @@ while not correct:
     option = input(json_q['sensors_list']['i1'])
 
     if 0 <= int(option) <= len(sensors):
-        if int(option) > 0:
-            option = sensors[int(option) - 1]
-            sensorType = option
-        else:
-            option = "other"
-            sensorType = "other"
         correct = True
-        if option != "gsr":
-            libraries.append(json_c['sensor_lib'][option])
-        if option != "tmp117" and option != "other":
-            for a in json_c['sensor_vars'][option]:
-                codeVars.append(json_c['sensor_vars'][option][a])
-        else:
-            codeVars.append(json_c['sensor_vars'][option])
+        sensorType = sensors[int(option) - 1]
+        libraries.append(json_c['sensor_lib'][sensorType])
+        for a in json_c['sensors_vars'][sensorType]:
+            codeVars.append(json_c['sensor_vars'][sensorType][a])
     else:
         print(json_q["error"])
 
@@ -86,7 +76,7 @@ while not correct:
     if 0 <= int(option) <= 1:
         correct = True
         if int(option) == 1:
-            frecuency = True
+            period = True
             option = input(json_q['code_questions']['measures']['q1'])
             correct = True
             constants.append(json_c['constants']['c0'])
@@ -144,13 +134,14 @@ if remoteStore:
 code.append(json_c['code_blocks']['start_sensor']['initialize'][sensorType])
 if remoteStore:
     code.append(json_c['code_blocks']['start_sensor']['webserver'][sensorType])
-if frecuency > 0:
+if period > 0:
     if sensorType != "gsr":
         code.append(json_c['code_blocks']['start_sensor']['common']['f1'])
     else:
-        code.append(json_c['code_blocks']['start_sensor']['common']['f1'])
+        code.append(json_c['code_blocks']['start_sensor']['body']['b2'])
 if sensorType == "tmp117":
     code.append(json_c['code_blocks']['start_sensor']['body']['b0'])
+
 code.append(json_c['code_blocks']['start_sensor']['common']['f2'])
 
 code.append(json_c['code_blocks']['setup']['init'])
