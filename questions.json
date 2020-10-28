@@ -1,0 +1,15 @@
+{
+  "introduction" : {
+    "welcome" :  "Welcome to sensor code generator! Please follow the instructions..."
+  },
+  "sensors_list" : {
+    "list_init" : "These are the available sensors:",
+    "i0" : "Indicate which one do you want to generate (1, 2, 3)...",
+    "i1" : "In case you want to use a different sensor, write 0. We will provide you a general template!"
+  },
+  "complete_process": {
+    "q0": "Do you want to complete the process and upload the script in your board?",
+    "q1": "Yes (0), No (1)"
+  },
+  "error": "ERROR! Please type the correct option"
+}
