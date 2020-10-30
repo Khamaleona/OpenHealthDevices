@@ -5,13 +5,14 @@
     "l2": "#include <FS.h>"
   },
   "storing_lib": {
-    "sl0": "#include <WiFi.h>",
-    "sl1": "#include <HTTPClient.h>",
-    "sl2": "#include <DNSServer.h>",
-    "sl3": "#include <WebServer.h>",
-    "sl4": "#include <EEPROM.h>"
+    "sl0": "#include <HTTPClient.h>",
+    "sl1": "#include <DNSServer.h>",
+    "sl2": "#include <WebServer.h>",
+    "sl3": "#include <EEPROM.h>"
   },
-  "sensor_description": "Galvanic Skin Response",
+  "wifi_lib": {
+    "wl0": "#include <WiFi.h>"
+  },
   "sensor_lib": "",
   "constants": {
     "c0": "#define uS_TO_S_FACTOR 1000000ULL  /* Conversion factor for micro seconds to seconds */",
