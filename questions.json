@@ -1,15 +1,35 @@
 {
-  "introduction" : {
-    "welcome" :  "Welcome to sensor code generator! Please follow the instructions..."
-  },
-  "sensors_list" : {
-    "list_init" : "These are the available sensors:",
-    "i0" : "Indicate which one do you want to generate (1, 2, 3)...",
-    "i1" : "In case you want to use a different sensor, write 0. We will provide you a general template!"
-  },
-  "complete_process": {
-    "q0": "Do you want to complete the process and upload the script in your board?",
-    "q1": "Yes (0), No (1)"
-  },
-  "error": "ERROR! Please type the correct option"
+  "language": {
+    "en": {
+      "introduction": {
+        "welcome": "Welcome to sensor code generator! Please follow the instructions..."
+      },
+      "sensors_list": {
+        "list_init": "These are the available sensors:",
+        "i0": "Indicate which one do you want to generate (1, 2, 3)..."
+      },
+      "complete_process": {
+        "q0": "Do you want to complete the process and upload the script in your board?",
+        "q1": "Yes (0), No (1)",
+        "q2": "Please, connect the board to your computer. Type 0 when it is done."
+      },
+      "error": "ERROR! Please type the correct option"
+    },
+    "es": {
+      "introduction": {
+        "welcome": "¡Bienvenido al generador de código de sensores! Por favor siga las instrucciones..."
+      },
+      "sensors_list": {
+        "list_init": "Estos son los sensores disponibles:",
+        "i0": "Indique cuál de ellos desea generar (1, 2, 3)...",
+        "i1": "En caso de que desee generar un sensor diferente, escriba 0. ¡Le proporcionaremos un template genérico!"
+      },
+      "complete_process": {
+        "q0": "¿Desea completar el proceso y subir el script a su placa?",
+        "q1": "Sí (0), No (1)",
+        "q2": "Por favor, conecte la placa a su ordenador. Escriba 0 cuando lo haya hecho."
+      },
+      "error": "¡ERROR! Por favor, teclee la opción correcta"
+    }
+  }
 }
