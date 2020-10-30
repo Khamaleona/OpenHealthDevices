@@ -3,21 +3,6 @@ import jinja2
 import os
 import sys
 
-generalQ = "../../questions.json"
-sensorQ = "./questions_sensor.json"
-sensorCode = "./code_sensor.json"
-template = "sensor-template.ino"
-uploadPy = "../../uploadGeneration.py"
-
-with open(generalQ) as json_file:
-    json_gq = json.load(json_file)
-
-with open(sensorQ) as json_file:
-    json_q = json.load(json_file)
-
-with open(sensorCode) as json_file:
-    json_c = json.load(json_file)
-
 libraries = []
 constants = []
 codeVars = []
@@ -30,10 +15,35 @@ captivePortal = False
 correct = False
 option = ""
 lang = ""
+main = False
 
-if len(sys.argv) == 2 and len(json_gq['language']) > 1:
-    lang = str(sys.argv[0]) #storing language
-else: lang = "en"
+if len(sys.argv) == 2: # and len(json_gq['language']) > 1:
+    lang = str(sys.argv[1]) #storing language
+    generalQ = "./questions.json"
+    sensorQ = "./Devices/Galvanic/questions_sensor.json"
+    sensorCode = "./Devices/Galvanic/code_sensor.json"
+    template = "sensor-template.ino"
+    uploadPy = "./uploadGeneration.py"
+    main = True
+
+else:
+    generalQ = "../../questions.json"
+    sensorQ = "./questions_sensor.json"
+    sensorCode = "./code_sensor.json"
+    template = "sensor-template.ino"
+    uploadPy = "../../uploadGeneration.py"
+
+with open(generalQ) as json_file:
+    json_gq = json.load(json_file)
+
+with open(sensorQ) as json_file:
+    json_q = json.load(json_file)
+
+with open(sensorCode) as json_file:
+    json_c = json.load(json_file)
+
+if len(json_q['language']) == 1:
+    lang = "en"
 
 json_q = json_q['language'][lang]
 print("Sensor selected: " + json_q['code_questions']['info']['name'])
@@ -161,7 +171,10 @@ y = json.dumps(all)
 y = json.loads(y)
 
 outputFileName = "M5StickC_GSR_generated.ino"
-result = jinja2.Environment(loader=jinja2.FileSystemLoader('../../.')).get_template(template)
+if main:
+    result = jinja2.Environment(loader=jinja2.FileSystemLoader('./')).get_template(template)
+else:
+    result = jinja2.Environment(loader=jinja2.FileSystemLoader('../../.')).get_template(template)
 result = result.render(templ=y)
 
 outFile = open(outputFileName, "w")
