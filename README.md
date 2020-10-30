@@ -3,11 +3,10 @@
 Repository created to store code related to Open Health Devices developed with Arduino and Python. This repository contains:
 
 <ul>
-  <li>Examples Folder</li>
-  <li>code.json</li>
+  <li>Devices Folder</li>
   <li>questions.json</li>
   <li>sensor-template.ino</li>
-  <li>sensorGenerator.py</li>
+  <li>main.py</li>
   <li>tools.py</li>
   <li>uploadGeneration.py</li>
 </ul>
@@ -39,22 +38,23 @@ Once you have those two, we can start the party.
 
 <h2>How it works?</h2>
 
-As you can see, there is a folder called "Examples" where we have added the source code of three devices:
+As you can see, there is a folder called "Devices" where we have added the source code of three devices and a general skeleton (for other sensors):
 
 <ol>
   <li><b>GSR (Galvanic Skin Response) Sensor:</b> It measures the electrical conductance of the skin.</li>
   <li><b>MAX30100: </b>It measures blood preasure and blood oxygen level.</li>
   <li><b>TMP117: </b>It measures the body temperature.</li>
+  <li><b>General: </b>It represents the main scheme suitable for every sensor.</li>
 </ol>
 
 Inside each sensor folder you will find an image that shows the circuit scheme and the Arduino code file (.ino). Those files contains all the functionality you would need if you wanted to collect their measurements and store them into a web server. What happens if you want a simpler behaviour? Maybe you just want to read the measures and display them. We have already thought about it. 
 
-Remember <b>sensorGenerator.py</b> file we have mentioned before? Here we have implemented everything. Using <b>code.json</b> and <b>questions.json</b> files it will ask you the details of your device and at the end, it will generate the <i>.ino</i> file that we will upload to the board later. These are the steps you need to follow to perform everything successfully:
+Remember <b>main.py</b> file we have mentioned before? Here we have implemented everything. Inside each sensor folder, you can find <b>code_sensor.json</b> and <b>questions_sensor.json</b> files. They contain every piece of code necessary to generate your selected sensor. You can execute them using main.py file or codeGeneration.py (it is inside the sensor folder). It will ask you the details of your device and at the end, it will generate the <i>.ino</i> file that we will upload to the board later. These are the steps you need to follow to perform everything successfully:
 
 <ul>
   <li>Open a terminal and run <i>tools.py</i> (you only need to do this the first time).</li>
   <li>If you want to upload code to board, build your circuit and connect them to your computer (here we have used the M5Stick-C board in our examples).</li>
-  <li>Finally, run sensorGenerator.py and answer every question as detailed (it will run uploadGeneration.py too).</li>
+  <li>Finally, run main.py (or sensorGenerator.py) and answer every question as detailed (it will run uploadGeneration.py too).</li>
 </ul>
 
 If everything was right, you will have your own medical device. Easy peasy lemon squeezy!
