@@ -5,11 +5,13 @@
     "l2": "#include <FS.h>"
   },
   "storing_lib": {
-    "sl0": "#include <WiFi.h>",
-    "sl1": "#include <HTTPClient.h>",
-    "sl2": "#include <DNSServer.h>",
-    "sl3": "#include <WebServer.h>",
-    "sl4": "#include <EEPROM.h>"
+    "sl0": "#include <HTTPClient.h>",
+    "sl1": "#include <DNSServer.h>",
+    "sl2": "#include <WebServer.h>",
+    "sl3": "#include <EEPROM.h>"
+  },
+  "wifi_lib": {
+    "wl0": "#include <WiFi.h>"
   },
   "sensor_description": "Temperature",
   "sensor_lib": "#include <SparkFun_TMP117.h>",
