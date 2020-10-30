@@ -5,13 +5,14 @@
     "l2": "#include <FS.h>"
   },
   "storing_lib": {
-    "sl0": "#include <WiFi.h>",
     "sl1": "#include <HTTPClient.h>",
     "sl2": "#include <DNSServer.h>",
     "sl3": "#include <WebServer.h>",
     "sl4": "#include <EEPROM.h>"
   },
-  "sensor_description": "Heart rate and SpO2",
+  "wifi_lib": {
+    "wl0": "#include <WiFi.h>"
+  },
   "sensor_lib": "#include \"MAX30100_PulseOximeter.h\"",
   "constants": {
     "c0": "#define uS_TO_S_FACTOR 1000000ULL  /* Conversion factor for micro seconds to seconds */",
@@ -20,8 +21,7 @@
   "sensor_vars": {
     "v0": "#define REPORTING_PERIOD_MS 1000",
     "v1": "PulseOximeter pox;",
-    "v2": "uint32_t tsLastReport = 0;",
-    "v3": "int inicio=0;"
+    "v2": "uint32_t tsLastReport = 0;"
   },
   "settings": {
     "captive_portal": {
@@ -85,7 +85,7 @@
         "f4": "}"
       },
       "remote_server": {
-        "f0": "\tconfigTime(gmtOffset_sec, daylightOffset_sec, ntpServer); \n\tprintLocalTime(); \n",
+        "f0": "\t\tconfigTime(gmtOffset_sec, daylightOffset_sec, ntpServer); \n\t\tprintLocalTime(); \n",
         "f1": "\t\tif(wifiStatus){ \n\t\t\tsendData(valor, oxygen, timeStringBuff); \n\t\t}else{ \n\t\t\tSerial.println(\"Wifi is disconnected!\"); \n\t\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\t\tM5.Lcd.setTextSize(2); \n\t\t\tM5.Lcd.printf(\"Wifi is OFF\"); \n\t\t} \n"
       }
     },
