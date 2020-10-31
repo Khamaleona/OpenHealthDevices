@@ -1,0 +1,17 @@
+https://www.thingiverse.com/thing:3009859
+Pulse Oximeter Clip to use with MAX30100 Board by Peter_Smith is licensed under the Creative Commons - Attribution license.
+http://creativecommons.org/licenses/by/3.0/
+
+# Summary
+
+Originally I created this clip for myself so it's not 100% accurate. Bottom piece has a slot for the MAX30100 PCB (It has to be the same one as the one in the picture). You need to connect the two pieces together using couple of screws. Also it's not a bad idea to put a small rubber band at the other end. At the end I added some foam like material to the inside so it can snuggly fit around the finger.
+
+As I said - it's not perfect... So feel free to modify it as you wish :). (original SketchUp file is included)
+
+# Print Settings
+
+Printer: CTC A8 (Prusa i3 clone)
+Rafts: No
+Supports: No
+Resolution: 0.1
+Infill: 20%
