@@ -1,105 +1,122 @@
 {
-  "general_lib" : {
-    "l0": "#include <Wire.h>",
-    "l1": "#include <M5StickC.h>",
-    "l2": "#include <FS.h>"
-  },
-  "storing_lib": {
-    "sl0": "#include <HTTPClient.h>",
-    "sl1": "#include <DNSServer.h>",
-    "sl2": "#include <WebServer.h>",
-    "sl3": "#include <EEPROM.h>"
-  },
-  "wifi_lib": {
-    "wl0": "#include <WiFi.h>"
-  },
-  "sensor_lib": "",
-  "constants": {
-    "c0": "#define uS_TO_S_FACTOR 1000000ULL  /* Conversion factor for micro seconds to seconds */",
-    "c1": "#define TIME_TO_SLEEP "
-  },
-  "sensor_vars": {
-    "v0": "////// Here you must indicate your sensor object and related vars;"
-  },
-  "settings": {
-    "captive_portal": {
-      "comment": "/////Captive Portal Settings",
-      "cp0": "bool portalStarted = false;",
-      "cp1": "const char * softAP_ssid = \"Captive Portal SSID\";",
-      "cp2": "const char * softAP_password = \"Captive Portal Pass\";",
-      "cp3": "const char * myHostname = \"Captive Portal Hostname\";",
-      "cp4": "const byte DNS_PORT = 53;",
-      "cp5": "IPAddress apIP(8, 8, 8, 8);",
-      "cp6": "IPAddress netMsk(255, 255, 255, 0);",
-      "cp7": "DNSServer dnsServer;",
-      "cp8": "WebServer webServer(80);"
+  "base": {
+    "libs": {
+      "general_lib" : {
+        "l0": "#include <Wire.h>",
+        "l1": "#include <M5StickC.h>",
+        "l2": "#include <FS.h>"
+      },
+      "sensor_lib": {
+        "sl0": ""
+      }
     },
-    "remote_server": {
-      "comment": "//Server information to get Time and Date",
-      "rs0": "const char* ntpServer = \"pool.ntp.org\";",
-      "rs1": "const long  gmtOffset_sec = 3600;",
-      "rs2": "const int daylightOffset_sec = 3600;",
-      "rs3": "char timeStringBuff[50];"
+    "period": {
+      "c0": "#define uS_TO_S_FACTOR 1000000ULL  /* Conversion factor for micro seconds to seconds */",
+      "c1": "#define TIME_TO_SLEEP "
     },
-    "wifi": {
-      "comment": "//WiFi Settings",
-      "w0": "bool wifiStatus = false;",
-      "w1": "bool conexion;",
-      "w2": "unsigned int status = WL_IDLE_STATUS;",
-      "w3": "char ssid[33] = \"wifi_ssid\";",
-      "w4": "char password[65] = \"wifi_password\";",
-      "w5": "char serverName[60] = \"server_url\";"
-    }
-  },
-  "functions": {
-    "wifi": {
-      "f0": "void wifiClear(){ \n\tWiFi.mode(WIFI_STA); \n\tWiFi.disconnect(); \n\twifiStatus = WiFi.status() == WL_CONNECTED; \n\tdelay(100); \n}",
-      "f1": "void wifiConnect(unsigned short tries){ \n\twifiStatus = WiFi.status() == WL_CONNECTED; \n\tSerial.print(\"Connecting\"); \n\twhile((tries > 0) && (!wifiStatus)){ \n\t\twifiClear(); \n\t\tWiFi.begin(ssid, password); \n\t\tdelay(5000); \n\t\twifiStatus = WiFi.status() == WL_CONNECTED; \n\t\ttries--; \n\t\tSerial.print('.'); \n\t} \n}",
-      "f2": "void wifiDisconnect(){ \n\tWiFi.disconnect(); \n\tWiFi.mode(WIFI_OFF); \n\twifiStatus = false; \n}"
+    "sensor_vars": {
+      "v0": "////// Here you must indicate your sensor object and related vars;"
     },
-    "remote_server": {
-      "f0": "void printLocalTime(){ \n\tstruct tm timeinfo; \n\tif(!getLocalTime(&timeinfo)){ \n\t\tSerial.println(\"Failed to obtain time\"); \n\t\treturn;\n\t} \n\tstrftime(timeStringBuff, sizeof(timeStringBuff), \"%Y-%m-%d %H:%M:%S\", &timeinfo); \n}",
-      "f1": "void sendData(int measure, char timedata[]){ \n\tHTTPClient http; \n\thttp.begin(serverName); \n\thttp.addHeader(\"Content-Type\", \"application/json\"); \n\tString json = \"{\\\"sensor\\\": \\\"X\\\",\"; \n\t\tjson += \"\\\"value\\\": \\\"\"; \n\t\tjson += String(measure); \n\t\tjson += \"\\\",\"; \n\t\tjson += \"\\\"date\\\": \\\"\"; \n\t\tjson += timedata; \n\t\tjson += \"\\\"}\"; \n\tSerial.println(json); \n\tint response = http.POST(json); \n\tdelay(200); \n\tif (response > 0){ \n\t\tSerial.print(\"HTTP Response Code: \"); \n\t\tSerial.println(response); \n\t\tSerial.println(http.getString()); \n\t} else { \n\t\tSerial.print(\"Error Code: \"); \n\t\tSerial.println(response); \n\t} \n\thttp.end(); \n}"
-    },
-    "ip": {
-      "f0": "bool isIP (String str){ \n\tfor(size_t i=0; i<str.length(); i++){ \n\t\tchar c = str.charAt(i); \n\t\tif (c != '.' && (c < '0' || c > '9')){ \n\t\t\treturn false; \n\t\t} \n\t} \n\treturn true; \n} \n",
-      "f1": "String toStringIP(IPAddress ip) { \n\tString res = \"\"; \n\tfor (int i = 0; i < 3; i++) { \n\t\tres += String((ip >> (8 * i)) & 0xFF) + \".\"; \n\t\t} \n\tres += String(((ip >> 8 * 3)) & 0xFF); \n\treturn res; \n} \n"
-    },
-    "captive_portal": {
-      "f0": "bool captivePortal(){ \n\tif(!isIP(webServer.hostHeader()) && webServer.hostHeader() != (String(myHostname) + \".local\")){ \n\t\tSerial.println(\"Request redirected to captive portal\");\n\t\twebServer.sendHeader(\"Location\", String(\"http://\") + toStringIP(webServer.client().localIP()), true);\n\t\twebServer.send(302, \"text/plain\",\"\");\n\t\twebServer.client().stop();\n\t\treturn true; \n\t} return false; \n} \n",
-      "f1": "void handleRoot(){ \n\tSerial.println(\"HANDLE ROOT....\");\n\tif(captivePortal()){ \n\t\t return; \n\t} \n\twebServer.sendHeader(\"Cache-Control\", \"no-cache, no-store, must-revalidate\");\n\twebServer.sendHeader(\"Pragma\", \"no-cache\"); \n\twebServer.sendHeader(\"Expires\", \"-1\"); \n\tString Page; \n\tPage += String(F(\"<!DOCTYPE html><html lang='es'><head>\")) + \n\tF(\"<meta name='viweport' content='width=device-width'>\") +\n\tF(\"<title>CaptivePortal</title></head><body><h1>HELLO WORLD!!</h1>\"); \n\tif(webServer.client().localIP() == apIP){ \n\t\tPage += String(F(\"<p>You are connected through the soft AP: \")) + softAP_ssid + F(\"</p>\");\n\t}else{ \n\t\tPage += String(F(\"<p>You are connected through the wifi network: \")) + ssid + F(\"</p>\"); \n\t} \n\tPage += F(\"<p> You may want to <a href='/wifi'>Config the wifi connection</a></p>\");\n\tPage += F(\"<p> If you ended configuring ESP32, please click <a href='/finish'>HERE</a></p></body></html>\"); \n\twebServer.send(200, \"text/html\", Page); \n} \n",
-      "f2": "void handleWifi(){ \n\twebServer.sendHeader(\"Cache-Control\", \"no-cache, no-store, must-revalidate\"); \n\twebServer.sendHeader(\"Pragma\", \"no-cache\"); \n\twebServer.sendHeader(\"Expires\", \"-1\");\n\tString Page; \n\tPage += String(F(\"<!DOCTYPE html><html lang='es'><head>\")) + \n\tF(\"<meta name='viewport' content='width=device-width'>\") + \n\tF(\"<title>CaptivePortal</title></head><body><h1>Wifi Config</h1>\"); \n\tif(webServer.client().localIP() == apIP){ \n\t\tPage += String(F(\"<p>You are connected through the soft AP: \")) + softAP_ssid + F(\"</p>\"); \n\t} else { \n\t\tPage += String(F(\"<p>You are connected through the wifi network: \")) + ssid + F(\"</p>\"); \n\t} \n\tPage += String(F(\"\\r\\n<br /><table><tr><th align='left'>SoftAP config</th></tr>''<tr><td>SSID \")) \n\t+ String(softAP_ssid) + F(\"</td></tr><tr><td>IP \") + toStringIP(WiFi.softAPIP()) \n\t+ F(\"</td></tr></table> \\r\\n<br /><table><tr><th align='left'>WLAN config</th></tr><tr><td>SSID \") \n\t+ String(ssid) + F(\"</td></tr><tr><td>IP \") + \n\ttoStringIP(WiFi.localIP()) + F(\"</td></tr></table> \\r\\n<br /><table><tr><th align='left'>WLAN list (refresh of any missing)</th></tr>\"); \n\tSerial.println(\"Scan start\"); \n\tint n = WiFi.scanNetworks(); \n\tSerial.println(\"Scan done\"); \n\tif(n > 0){ \n\t\t for(int i=0; i< n; i++){ \n\t\t\tPage += String(F(\"\\r\\n<tr><td>SSID \")) + WiFi.SSID(i) + F(\")</td></tr>\"); \n\t\t }\n\t} else {\n\t\tPage += F(\"<tr><td>No WLAN found</td></tr>\"); \n\t} \n\tPage += String(F(\"</table>\")) + \n\tF(\"\\r\\n<br/> <form method='POST' action='/wifisave'><h4>Connect to network:</h4>\")+ \n\tF(\"<input type='text' placeholder='network' name='n'/>\") +\n\tF(\"<br/> <input type='password' placeholder='password' name='p'/>\") + \n\tF(\"<br/> <input type='text' placeholder='server' name='s'/>\") + \n\tF(\"<br/> <input type='submit' value='Connect/Disconnect'/></form>\") + \n\tF(\"<p>You may want to <a href='/'>Return to the home page</a></p></body></html>\"); \n\twebServer.send(200, \"text/html\", Page); \n\twebServer.client().stop(); //Stop is needed because we sent no content length \n} \n",
-      "f3": "void handleWifiSave(){ \n\tSerial.println(\"WiFi Saving...\"); \n\twebServer.arg(\"n\").toCharArray(ssid, sizeof(ssid) - 1); \n\twebServer.arg(\"p\").toCharArray(password, sizeof(password) - 1); \n\twebServer.arg(\"s\").toCharArray(serverName, sizeof(serverName)-1); \n\twebServer.sendHeader(\"Location\", \"wifi\", true); \n\twebServer.sendHeader(\"Cache-Control\", \"no-cache, no-store, must-revalidate\"); \n\twebServer.sendHeader(\"Pragma\", \"no-cache\"); \n\twebServer.sendHeader(\"Expires\", \"-1\"); \n\twebServer.send(302, \"text/plain\", \"\"); \n\twebServer.client().stop(); \n\tsaveCredentials(); \n\tconexion = strlen(ssid) > 0; \n} \n",
-      "f4": "void finishConfiguration(){ \n\twebServer.close(); \n\tportalStarted = false; \n\tESP.restart(); \n} \n",
-      "f5": "void handleNotFound(){ \n\tif(captivePortal()){ \n\t\treturn; \n\t} \n\tString message = F(\"File Not Found\\n\\n\"); \n\tmessage += F(\"URI: \"); \n\tmessage += webServer.uri(); \n\tmessage += F(\"\\nMethod: \"); \n\tmessage += (webServer.method() == HTTP_GET) ? \"GET\" : \"POST\"; \n\tmessage += F(\"\\nArguments: \"); \n\tmessage += webServer.args(); \n\tmessage += F(\"\\n\"); \n\tfor(uint8_t i=0; i< webServer.args(); i++){ \n\t\tmessage += String(F(\" \")) + webServer.argName(i) + F(\": \") + webServer.arg(i) + F(\"\\n\"); \n\t} \n\twebServer.sendHeader(\"Cache-Control\", \"no-cache, no-store, must-revalidate\"); \n\twebServer.sendHeader(\"Pragma\", \"no-cache\"); \n\twebServer.sendHeader(\"Expires\", \"-1\"); \n\twebServer.send(302, \"text/plain\", message); \n} \n",
-      "f6": "void startCaptivePortal(){ \n\t//Captive Portal Configuration \n\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\tM5.Lcd.setCursor(0, 6, 2); \n\tM5.Lcd.setTextColor(WHITE, BLACK); \n\tM5.Lcd.setTextSize(1); \n\tM5.Lcd.printf(\"Starting Configuration Portal...\"); \n\tWiFi.mode(WIFI_AP); \n\tWiFi.persistent(false); \n\tWiFi.softAP(softAP_ssid, softAP_password); \n\tdelay(2000); //VERY IMPORTANT\n\tWiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0)); \n\tSerial.print(\"Web Server IP: \"); \n\tSerial.println(apIP); \n\tSerial.print(\"SSID: \"); \n\tSerial.println(softAP_ssid); \n\tSerial.print(\"Password: \"); \n\tSerial.println(softAP_password); \n\tdnsServer.start(DNS_PORT, \"*\", apIP);\n\twebServer.on(\"/\", handleRoot); \n\twebServer.on(\"/wifi\", handleWifi); \n\twebServer.on(\"/wifisave\", handleWifiSave); \n\twebServer.on(\"/finish\", finishConfiguration); \n\twebServer.onNotFound(handleNotFound); \n\twebServer.begin(); \n\tSerial.println(\"HTTP Server Started!\");\n\tconexion = strlen(ssid) > 0; //Request WLAN connect if there is a SSID \n} \n"
-    },
-    "start_sensor": {
-      "base": {
+    "functions": {
+      "start_sensor": {
         "f0": "void startSensor(){ \n",
         "f1": "\tint var=0; //Modify for your sensor measures \n\t/*\n\tHere you should put the function that performs the measurements \n\t*/\n\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\tM5.Lcd.setCursor(0, 6, 2); \n\tM5.Lcd.setTextColor(WHITE, BLACK); \n\tM5.Lcd.setTextSize(2); \n\tM5.Lcd.printf(\"Value: %d\", var);\n\tdelay(5000); //Waiting 5 seconds to show the measure \n\t",
         "f2": "\tesp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR); \n\tSerial.println(\"ESP32 is going to sleep \"+ String(TIME_TO_SLEEP) +\" seconds...\"); \n\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\tM5.Lcd.setCursor(0, 6, 2); \n\tM5.Lcd.setTextColor(WHITE, BLACK); \n\tM5.Lcd.setTextSize(2); \n\tM5.Lcd.printf(\"Sleeping...\"); \n\tM5.Lcd.fillScreen(BLACK); \n\tSerial.flush(); \n\tesp_deep_sleep_start(); \n",
         "f3": "}"
       },
-      "remote_server": {
+      "setup": {
+        "init": "void setup() { \n\tWire.begin(); \n\tSerial.begin(115200); \n\tM5.begin(); \n\tM5.Lcd.setRotation(3); \t",
+        "end": "}\n"
+      },
+      "loop": {
+        "init": "void loop() { \t",
+        "body": "startSensor();",
+        "end": "}\n"
+      }
+    }
+  },
+  "extra": {
+    "remote_store": {
+      "libs": {
+        "sl0": "#include <HTTPClient.h>",
+        "sl1": "#include <DNSServer.h>",
+        "sl2": "#include <WebServer.h>",
+        "sl3": "#include <EEPROM.h>"
+      },
+      "vars": {
+        "comment": "//Server information to get Time and Date",
+        "rs0": "const char* ntpServer = \"pool.ntp.org\";",
+        "rs1": "const long  gmtOffset_sec = 3600;",
+        "rs2": "const int daylightOffset_sec = 3600;",
+        "rs3": "char timeStringBuff[50];"
+      },
+      "functions": {
+        "f0": "void printLocalTime(){ \n\tstruct tm timeinfo; \n\tif(!getLocalTime(&timeinfo)){ \n\t\tSerial.println(\"Failed to obtain time\"); \n\t\treturn;\n\t} \n\tstrftime(timeStringBuff, sizeof(timeStringBuff), \"%Y-%m-%d %H:%M:%S\", &timeinfo); \n}",
+        "f1": "void sendData(int measure, char timedata[]){ \n\tHTTPClient http; \n\thttp.begin(serverName); \n\thttp.addHeader(\"Content-Type\", \"application/json\"); \n\tString json = \"{\\\"sensor\\\": \\\"X\\\",\"; \n\t\tjson += \"\\\"value\\\": \\\"\"; \n\t\tjson += String(measure); \n\t\tjson += \"\\\",\"; \n\t\tjson += \"\\\"date\\\": \\\"\"; \n\t\tjson += timedata; \n\t\tjson += \"\\\"}\"; \n\tSerial.println(json); \n\tint response = http.POST(json); \n\tdelay(200); \n\tif (response > 0){ \n\t\tSerial.print(\"HTTP Response Code: \"); \n\t\tSerial.println(response); \n\t\tSerial.println(http.getString()); \n\t} else { \n\t\tSerial.print(\"Error Code: \"); \n\t\tSerial.println(response); \n\t} \n\thttp.end(); \n}",
+        "save": "void saveCredentials(){ \n\tEEPROM.begin(512); \n\tEEPROM.put(0, ssid); \n\tEEPROM.put(0 + sizeof(ssid), password); \n\tEEPROM.put(0 + sizeof(ssid) + sizeof(password), serverName); \n\tchar ok[2 + 1] = \"OK\"; \n\tEEPROM.put(0 + sizeof(ssid) + sizeof(password) + sizeof(serverName), ok); \n\tEEPROM.commit(); \n\tEEPROM.end(); \n} \n",
+        "load": "bool loadCredentials(){ \n\tbool loaded = true; \n\tEEPROM.begin(512); \n\tEEPROM.get(0, ssid); \n\tEEPROM.get(0 + sizeof(ssid), password); \n\tEEPROM.get(0 + sizeof(ssid) + sizeof(password), serverName); \n\tchar ok[2 + 1]; \n\tEEPROM.get(0 + sizeof(ssid) + sizeof(password) + sizeof(serverName), ok); \n\tEEPROM.end(); \n\tif(String(ok) != String(\"OK\")){ \n\t\tssid[0] = 0; \n\t\tpassword[0] = 0; \n\t\tloaded = false; \n\t} \n\tSerial.print(\"Recovered credentials: \"); \n\tSerial.print(ssid); \n\tSerial.print(\", \"); \n\tSerial.println(password); \n\tSerial.print(\"SERVER NAME: \"); \n\tSerial.println(serverName); \n\tEEPROM.end(); \n\treturn loaded; \n} \n"
+      },
+      "start_sensor": {
         "f0": "\tconfigTime(gmtOffset_sec, daylightOffset_sec, ntpServer); \n\tprintLocalTime(); \n",
         "f1": "\tif(wifiStatus){ \n\t\tsendData(var, timeStringBuff); \n\t}else{ \n\t\tSerial.println(\"Wifi is disconnected\"); \n\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\tM5.Lcd.setTextSize(2); \n\t\tM5.Lcd.printf(\"Wifi is OFF\"); \n\t} \n\t"
+      },
+      "setup": {
+        "s0": "\tif(loadCredentials()){ \n\t\tSerial.print(\"Connectiong to \"); \n\t\tSerial.println(ssid); \n\t\twifiDisconnect(); \n\t\twifiConnect(15); \n\t\tif(wifiStatus){ \n\t\t\tSerial.println(\"\"); \n\t\t\tSerial.print(\"Connected to WiFi Network with IP Address: \"); \n\t\t\tSerial.println(WiFi.localIP()); \n\t\t\tHTTPClient http; \n\t\t\thttp.begin(serverName); \n\t\t\tint response = http.GET(); \n\t\t\tif(response == 200){ \n\t\t\t\thttp.end(); \n\t\t\t\tstartSensor(); \n\t\t\t}else{ \n\t\t\t\tstartCaptivePortal(); \n\t\t\t\tportalStarted = true; \n\t\t\t} \n\t\t}else{ \n\t\t\tstartCaptivePortal(); \n\t\t\tportalStarted = true; \n\t\t} \n\t}else{ \n\t\t//No credentials, then start Captive Portal \n\t\tstartCaptivePortal(); \n\t\tportalStarted = true; \n\t}"
+      },
+      "loop": {
+        "l0": "\tif(portalStarted){ \n\t\tdnsServer.processNextRequest(); \n\t\twebServer.handleClient(); \n\t}"
       }
     },
-    "credentials": {
-      "save": "void saveCredentials(){ \n\tEEPROM.begin(512); \n\tEEPROM.put(0, ssid); \n\tEEPROM.put(0 + sizeof(ssid), password); \n\tEEPROM.put(0 + sizeof(ssid) + sizeof(password), serverName); \n\tchar ok[2 + 1] = \"OK\"; \n\tEEPROM.put(0 + sizeof(ssid) + sizeof(password) + sizeof(serverName), ok); \n\tEEPROM.commit(); \n\tEEPROM.end(); \n} \n",
-      "load": "bool loadCredentials(){ \n\tbool loaded = true; \n\tEEPROM.begin(512); \n\tEEPROM.get(0, ssid); \n\tEEPROM.get(0 + sizeof(ssid), password); \n\tEEPROM.get(0 + sizeof(ssid) + sizeof(password), serverName); \n\tchar ok[2 + 1]; \n\tEEPROM.get(0 + sizeof(ssid) + sizeof(password) + sizeof(serverName), ok); \n\tEEPROM.end(); \n\tif(String(ok) != String(\"OK\")){ \n\t\tssid[0] = 0; \n\t\tpassword[0] = 0; \n\t\tloaded = false; \n\t} \n\tSerial.print(\"Recovered credentials: \"); \n\tSerial.print(ssid); \n\tSerial.print(\", \"); \n\tSerial.println(password); \n\tSerial.print(\"SERVER NAME: \"); \n\tSerial.println(serverName); \n\tEEPROM.end(); \n\treturn loaded; \n} \n"
+    "wifi": {
+      "libs": {
+        "wl0": "#include <WiFi.h>"
+      },
+      "vars": {
+        "comment": "//WiFi Settings",
+        "w0": "bool wifiStatus = false;",
+        "w1": "bool conexion;",
+        "w2": "unsigned int status = WL_IDLE_STATUS;",
+        "w3": "char ssid[33] = \"wifi_ssid\";",
+        "w4": "char password[65] = \"wifi_password\";",
+        "w5": "char serverName[60] = \"server_url\";"
+      },
+      "functions": {
+        "f0": "void wifiClear(){ \n\tWiFi.mode(WIFI_STA); \n\tWiFi.disconnect(); \n\twifiStatus = WiFi.status() == WL_CONNECTED; \n\tdelay(100); \n}",
+        "f1": "void wifiConnect(unsigned short tries){ \n\twifiStatus = WiFi.status() == WL_CONNECTED; \n\tSerial.print(\"Connecting\"); \n\twhile((tries > 0) && (!wifiStatus)){ \n\t\twifiClear(); \n\t\tWiFi.begin(ssid, password); \n\t\tdelay(5000); \n\t\twifiStatus = WiFi.status() == WL_CONNECTED; \n\t\ttries--; \n\t\tSerial.print('.'); \n\t} \n}",
+        "f2": "void wifiDisconnect(){ \n\tWiFi.disconnect(); \n\tWiFi.mode(WIFI_OFF); \n\twifiStatus = false; \n}"
+      },
+      "start_sensor": {},
+      "setup": {},
+      "loop": {}
     },
-    "setup": {
-      "init": "void setup() { \n\tWire.begin(); \n\tSerial.begin(115200); \n\tM5.begin(); \n\tM5.Lcd.setRotation(3); \t",
-      "portal": "\tif(loadCredentials()){ \n\t\tSerial.print(\"Connectiong to \"); \n\t\tSerial.println(ssid); \n\t\twifiDisconnect(); \n\t\twifiConnect(15); \n\t\tif(wifiStatus){ \n\t\t\tSerial.println(\"\"); \n\t\t\tSerial.print(\"Connected to WiFi Network with IP Address: \"); \n\t\t\tSerial.println(WiFi.localIP()); \n\t\t\tHTTPClient http; \n\t\t\thttp.begin(serverName); \n\t\t\tint response = http.GET(); \n\t\t\tif(response == 200){ \n\t\t\t\thttp.end(); \n\t\t\t\tstartSensor(); \n\t\t\t}else{ \n\t\t\t\tstartCaptivePortal(); \n\t\t\t\tportalStarted = true; \n\t\t\t} \n\t\t}else{ \n\t\t\tstartCaptivePortal(); \n\t\t\tportalStarted = true; \n\t\t} \n\t}else{ \n\t\t//No credentials, then start Captive Portal \n\t\tstartCaptivePortal(); \n\t\tportalStarted = true; \n\t}",
-      "end": "}\n"
-    },
-    "loop": {
-      "init": "void loop() { \t",
-      "portal": "\tif(portalStarted){ \n\t\tdnsServer.processNextRequest(); \n\t\twebServer.handleClient(); \n\t}",
-      "noPortal": "startSensor();",
-      "end": "}\n"
+    "captive_portal": {
+      "libs": {},
+      "vars": {
+        "comment": "/////Captive Portal Settings",
+        "cp0": "bool portalStarted = false;",
+        "cp1": "const char * softAP_ssid = \"Captive Portal SSID\";",
+        "cp2": "const char * softAP_password = \"Captive Portal Pass\";",
+        "cp3": "const char * myHostname = \"Captive Portal Hostname\";",
+        "cp4": "const byte DNS_PORT = 53;",
+        "cp5": "IPAddress apIP(8, 8, 8, 8);",
+        "cp6": "IPAddress netMsk(255, 255, 255, 0);",
+        "cp7": "DNSServer dnsServer;",
+        "cp8": "WebServer webServer(80);"
+      },
+      "functions": {
+        "f0": "bool isIP (String str){ \n\tfor(size_t i=0; i<str.length(); i++){ \n\t\tchar c = str.charAt(i); \n\t\tif (c != '.' && (c < '0' || c > '9')){ \n\t\t\treturn false; \n\t\t} \n\t} \n\treturn true; \n} \n",
+        "f1": "String toStringIP(IPAddress ip) { \n\tString res = \"\"; \n\tfor (int i = 0; i < 3; i++) { \n\t\tres += String((ip >> (8 * i)) & 0xFF) + \".\"; \n\t\t} \n\tres += String(((ip >> 8 * 3)) & 0xFF); \n\treturn res; \n} \n",
+        "f2": "bool captivePortal(){ \n\tif(!isIP(webServer.hostHeader()) && webServer.hostHeader() != (String(myHostname) + \".local\")){ \n\t\tSerial.println(\"Request redirected to captive portal\");\n\t\twebServer.sendHeader(\"Location\", String(\"http://\") + toStringIP(webServer.client().localIP()), true);\n\t\twebServer.send(302, \"text/plain\",\"\");\n\t\twebServer.client().stop();\n\t\treturn true; \n\t} return false; \n} \n",
+        "f3": "void handleRoot(){ \n\tSerial.println(\"HANDLE ROOT....\");\n\tif(captivePortal()){ \n\t\t return; \n\t} \n\twebServer.sendHeader(\"Cache-Control\", \"no-cache, no-store, must-revalidate\");\n\twebServer.sendHeader(\"Pragma\", \"no-cache\"); \n\twebServer.sendHeader(\"Expires\", \"-1\"); \n\tString Page; \n\tPage += String(F(\"<!DOCTYPE html><html lang='es'><head>\")) + \n\tF(\"<meta name='viweport' content='width=device-width'>\") +\n\tF(\"<title>CaptivePortal</title></head><body><h1>HELLO WORLD!!</h1>\"); \n\tif(webServer.client().localIP() == apIP){ \n\t\tPage += String(F(\"<p>You are connected through the soft AP: \")) + softAP_ssid + F(\"</p>\");\n\t}else{ \n\t\tPage += String(F(\"<p>You are connected through the wifi network: \")) + ssid + F(\"</p>\"); \n\t} \n\tPage += F(\"<p> You may want to <a href='/wifi'>Config the wifi connection</a></p>\");\n\tPage += F(\"<p> If you ended configuring ESP32, please click <a href='/finish'>HERE</a></p></body></html>\"); \n\twebServer.send(200, \"text/html\", Page); \n} \n",
+        "f4": "void handleWifi(){ \n\twebServer.sendHeader(\"Cache-Control\", \"no-cache, no-store, must-revalidate\"); \n\twebServer.sendHeader(\"Pragma\", \"no-cache\"); \n\twebServer.sendHeader(\"Expires\", \"-1\");\n\tString Page; \n\tPage += String(F(\"<!DOCTYPE html><html lang='es'><head>\")) + \n\tF(\"<meta name='viewport' content='width=device-width'>\") + \n\tF(\"<title>CaptivePortal</title></head><body><h1>Wifi Config</h1>\"); \n\tif(webServer.client().localIP() == apIP){ \n\t\tPage += String(F(\"<p>You are connected through the soft AP: \")) + softAP_ssid + F(\"</p>\"); \n\t} else { \n\t\tPage += String(F(\"<p>You are connected through the wifi network: \")) + ssid + F(\"</p>\"); \n\t} \n\tPage += String(F(\"\\r\\n<br /><table><tr><th align='left'>SoftAP config</th></tr>''<tr><td>SSID \")) \n\t+ String(softAP_ssid) + F(\"</td></tr><tr><td>IP \") + toStringIP(WiFi.softAPIP()) \n\t+ F(\"</td></tr></table> \\r\\n<br /><table><tr><th align='left'>WLAN config</th></tr><tr><td>SSID \") \n\t+ String(ssid) + F(\"</td></tr><tr><td>IP \") + \n\ttoStringIP(WiFi.localIP()) + F(\"</td></tr></table> \\r\\n<br /><table><tr><th align='left'>WLAN list (refresh of any missing)</th></tr>\"); \n\tSerial.println(\"Scan start\"); \n\tint n = WiFi.scanNetworks(); \n\tSerial.println(\"Scan done\"); \n\tif(n > 0){ \n\t\t for(int i=0; i< n; i++){ \n\t\t\tPage += String(F(\"\\r\\n<tr><td>SSID \")) + WiFi.SSID(i) + F(\")</td></tr>\"); \n\t\t }\n\t} else {\n\t\tPage += F(\"<tr><td>No WLAN found</td></tr>\"); \n\t} \n\tPage += String(F(\"</table>\")) + \n\tF(\"\\r\\n<br/> <form method='POST' action='/wifisave'><h4>Connect to network:</h4>\")+ \n\tF(\"<input type='text' placeholder='network' name='n'/>\") +\n\tF(\"<br/> <input type='password' placeholder='password' name='p'/>\") + \n\tF(\"<br/> <input type='text' placeholder='server' name='s'/>\") + \n\tF(\"<br/> <input type='submit' value='Connect/Disconnect'/></form>\") + \n\tF(\"<p>You may want to <a href='/'>Return to the home page</a></p></body></html>\"); \n\twebServer.send(200, \"text/html\", Page); \n\twebServer.client().stop(); //Stop is needed because we sent no content length \n} \n",
+        "f5": "void handleWifiSave(){ \n\tSerial.println(\"WiFi Saving...\"); \n\twebServer.arg(\"n\").toCharArray(ssid, sizeof(ssid) - 1); \n\twebServer.arg(\"p\").toCharArray(password, sizeof(password) - 1); \n\twebServer.arg(\"s\").toCharArray(serverName, sizeof(serverName)-1); \n\twebServer.sendHeader(\"Location\", \"wifi\", true); \n\twebServer.sendHeader(\"Cache-Control\", \"no-cache, no-store, must-revalidate\"); \n\twebServer.sendHeader(\"Pragma\", \"no-cache\"); \n\twebServer.sendHeader(\"Expires\", \"-1\"); \n\twebServer.send(302, \"text/plain\", \"\"); \n\twebServer.client().stop(); \n\tsaveCredentials(); \n\tconexion = strlen(ssid) > 0; \n} \n",
+        "f6": "void finishConfiguration(){ \n\twebServer.close(); \n\tportalStarted = false; \n\tESP.restart(); \n} \n",
+        "f7": "void handleNotFound(){ \n\tif(captivePortal()){ \n\t\treturn; \n\t} \n\tString message = F(\"File Not Found\\n\\n\"); \n\tmessage += F(\"URI: \"); \n\tmessage += webServer.uri(); \n\tmessage += F(\"\\nMethod: \"); \n\tmessage += (webServer.method() == HTTP_GET) ? \"GET\" : \"POST\"; \n\tmessage += F(\"\\nArguments: \"); \n\tmessage += webServer.args(); \n\tmessage += F(\"\\n\"); \n\tfor(uint8_t i=0; i< webServer.args(); i++){ \n\t\tmessage += String(F(\" \")) + webServer.argName(i) + F(\": \") + webServer.arg(i) + F(\"\\n\"); \n\t} \n\twebServer.sendHeader(\"Cache-Control\", \"no-cache, no-store, must-revalidate\"); \n\twebServer.sendHeader(\"Pragma\", \"no-cache\"); \n\twebServer.sendHeader(\"Expires\", \"-1\"); \n\twebServer.send(302, \"text/plain\", message); \n} \n",
+        "f8": "void startCaptivePortal(){ \n\t//Captive Portal Configuration \n\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\tM5.Lcd.setCursor(0, 6, 2); \n\tM5.Lcd.setTextColor(WHITE, BLACK); \n\tM5.Lcd.setTextSize(1); \n\tM5.Lcd.printf(\"Starting Configuration Portal...\"); \n\tWiFi.mode(WIFI_AP); \n\tWiFi.persistent(false); \n\tWiFi.softAP(softAP_ssid, softAP_password); \n\tdelay(2000); //VERY IMPORTANT\n\tWiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0)); \n\tSerial.print(\"Web Server IP: \"); \n\tSerial.println(apIP); \n\tSerial.print(\"SSID: \"); \n\tSerial.println(softAP_ssid); \n\tSerial.print(\"Password: \"); \n\tSerial.println(softAP_password); \n\tdnsServer.start(DNS_PORT, \"*\", apIP);\n\twebServer.on(\"/\", handleRoot); \n\twebServer.on(\"/wifi\", handleWifi); \n\twebServer.on(\"/wifisave\", handleWifiSave); \n\twebServer.on(\"/finish\", finishConfiguration); \n\twebServer.onNotFound(handleNotFound); \n\twebServer.begin(); \n\tSerial.println(\"HTTP Server Started!\");\n\tconexion = strlen(ssid) > 0; //Request WLAN connect if there is a SSID \n} \n"
+      },
+      "start_sensor": {},
+      "setup": {},
+      "loop": {}
     }
   }
 }
