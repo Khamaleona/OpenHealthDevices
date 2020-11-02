@@ -2,10 +2,6 @@
 {{lib}}
 {% endfor %}
 
-{% for cons in templ["constants"] %}
-{{cons}}
-{% endfor %}
-
 {% for var in templ["codeVars"] %}
 {{var}}
 {% endfor %}
