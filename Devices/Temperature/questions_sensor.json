@@ -1,18 +1,18 @@
 {
   "language": {
     "en": {
+      "info": {
+        "name": "Temperature Sensor"
+      },
       "code_questions" : {
-        "info": {
-          "name": "Temperature Sensor"
-        },
-        "measures" : {
+        "period" : {
           "q0": "Do you want to get measures constantly (0) or periodically (1)?",
           "q1": "Please type the amount of seconds you want to set between each measure..."
         },
         "wifi" : {
           "q0": "Do you want your sensor to have wifi connection? Yes (0) or No (1)"
         },
-        "remoteStore": {
+        "remote_store": {
           "q0": "Do you want to store every measure remotely(0) or do you prefer to just visualize them (1)?"
         },
         "captive_portal" : {

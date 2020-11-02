@@ -4,18 +4,15 @@ import os
 import sys
 
 libraries = []
-constants = []
 codeVars = []
 settings = []
 code = []
-remoteStore = False
-wifi = False
-period = False
-captivePortal = False
+
 correct = False
 option = ""
 lang = ""
 main = False
+flags = {}
 
 if len(sys.argv) == 2: # and len(json_gq['language']) > 1:
     lang = str(sys.argv[1]) #storing language
@@ -42,31 +39,39 @@ with open(sensorQ) as json_file:
 with open(sensorCode) as json_file:
     json_c = json.load(json_file)
 
-if len(json_q['language']) == 1:
+if len(json_q['language']) == 1 or lang == "" or lang not in json_q['language']:
     lang = "en"
 
+for a in json_c['extra']:
+    flags[a] = False
+flags["period"]=0
+
 json_q = json_q['language'][lang]
-print("Sensor selected: " + json_q['code_questions']['info']['name'])
+print("Sensor selected: " + json_q['info']['name'])
 
 json_gq = json_gq['language'][lang]
 print(json_gq['introduction']['welcome'])
 
-for lib in json_c['general_lib']:
-    libraries.append(json_c['general_lib'][lib])
+# Libraries and vars
+for lib in json_c['base']['libs']['general_lib']:
+    libraries.append(json_c['base']['libs']['general_lib'][lib])
+for lib in json_c['base']['libs']['sensor_lib']:
+    libraries.append(json_c['base']['libs']['sensor_lib'][lib])
+for var in json_c['base']['sensor_vars']:
+    codeVars.append(json_c['base']['sensor_vars'][var])
 
-for var in json_c['sensor_vars']:
-    codeVars.append(json_c['sensor_vars'][var])
-
-option = input(json_q['code_questions']['measures']['q0'])
+option = input(json_q['code_questions']['period']['q0'])
+correct = False
 while not correct:
     if option == "1":
-        option = input(json_q['code_questions']['measures']['q1'])
+        option = input(json_q['code_questions']['period']['q1'])
         while not correct:
             if option.isnumeric():
                 period = int(option)
+                flags['period'] = period
                 correct = True
-                constants.append(json_c['constants']['c0'])
-                constants.append(json_c['constants']['c1'] + str(period))
+                codeVars.append(json_c['base']['period']['c0'])
+                codeVars.append(json_c['base']['period']['c1'] + str(period))
             else:
                 option = input(json_q['error'])
     elif option == "0":
@@ -79,96 +84,90 @@ correct = False
 option = input(json_q['code_questions']['wifi']['q0'])
 while not correct:
     if option == "0":
-        wifi = True
+        flags['wifi'] = True
         correct = True
-        for lib in json_c['wifi_lib']:
-            libraries.append(json_c['wifi_lib'][lib])
+        for w in json_c['extra']['wifi']:
+            for x in json_c['extra']['wifi'][w]:
+                if w == "libs":
+                    libraries.append(json_c['extra']['wifi'][w][x])
+                if w == "vars":
+                    codeVars.append(json_c['extra']['wifi'][w][x])
+                if w == "functions":
+                    code.append(json_c['extra']['wifi'][w][x])
     elif option == "1":
-        wifi = False
         correct = True
     else:
         option = input(json_q['error'])
 
-correct = False
-option = input(json_q['code_questions']['remoteStore']['q0'])
-while not correct:
-    if option == "0":
-        remoteStore = True
-        correct = True
-        for lib in json_c['storing_lib']:
-            libraries.append(json_c['storing_lib'][lib])
-    elif option == "1":
-        remoteStore = False
-        correct = True
-    else:
-        option = input(json_q['error'])
+if flags['wifi']:
+    correct = False
+    option = input(json_q['code_questions']['remote_store']['q0'])
+    while not correct:
+        if option == "0":
+            flags['remote_store'] = True
+            correct = True
+            for w in json_c['extra']['remote_store']:
+                for x in json_c['extra']['remote_store'][w]:
+                    if w == "libs":
+                        libraries.append(json_c['extra']['remote_store'][w][x])
+                    if w == "vars":
+                        codeVars.append(json_c['extra']['remote_store'][w][x])
+                    if w == "functions":
+                        code.append(json_c['extra']['remote_store'][w][x])
+        elif option == "1":
+            correct = True
+        else:
+            option = input(json_q['error'])
 
-correct = False
-print(json_q['code_questions']['captive_portal']['q0'])
-option = input(json_q['code_questions']['captive_portal']['q1'])
-while not correct:
-    if option == "0":
-        correct = True;
-        captivePortal = True;
-        for a in json_c['settings']['captive_portal']:
-            settings.append(json_c['settings']['captive_portal'][a])
-        if remoteStore:
-            for a in json_c['settings']['remote_server']:
-                settings.append(json_c['settings']['remote_server'][a])
-            for a in json_c['settings']['wifi']:
-                settings.append(json_c['settings']['wifi'][a])
-    elif option == "1":
-        correct = True;
-        captivePortal = False;
-    else:
-        option = input(json_q['error'])
+    if flags["remote_store"]:
+        correct = False
+        print(json_q['code_questions']['captive_portal']['q0'])
+        option = input(json_q['code_questions']['captive_portal']['q1'])
+        while not correct:
+            if option == "0":
+                correct = True;
+                flags['captive_portal'] = True;
+                for w in json_c['extra']['captive_portal']:
+                    for x in json_c['extra']['captive_portal'][w]:
+                        if w == "libs":
+                            libraries.append(json_c['extra']['captive_portal'][w][x])
+                        if w == "vars":
+                            codeVars.append(json_c['extra']['captive_portal'][w][x])
+                        if w == "functions":
+                            code.append(json_c['extra']['captive_portal'][w][x])
+            elif option == "1":
+                correct = True;
+                captivePortal = False;
+            else:
+                option = input(json_q['error'])
 
-json_c = json_c['functions']
+# Base Functions
+code.append(json_c['base']['functions']['start_sensor']["f0"])
+if flags["remote_store"]:
+    code.append(json_c['extra']['remote_store']['start_sensor']['f0'])
+code.append(json_c['base']['functions']['start_sensor']["f1"])
+if flags["remote_store"]:
+    code.append(json_c['extra']['remote_store']['start_sensor']['f1'])
+    code.append(json_c['base']['functions']['start_sensor']["f2"])
+if flags["period"] > 0:
+    code.append(json_c['base']['functions']['start_sensor']["f3"])
+code.append(json_c['base']['functions']['start_sensor']["f4"])
 
-if wifi:
-    for a in json_c['wifi']:
-        code.append(json_c['wifi'][a])
+code.append(json_c['base']['functions']['setup']["init"])
+if flags["remote_store"]:
+    code.append(json_c['extra']['remote_store']['setup']['s0'])
+code.append(json_c['base']['functions']['setup']["end"])
 
-if remoteStore:
-    for a in json_c['remote_server']:
-        code.append(json_c['remote_server'][a])
-    for a in json_c['ip']:
-        code.append(json_c['ip'][a])
-
-if captivePortal:
-    for a in json_c['captive_portal']:
-        code.append(json_c['captive_portal'][a])
-
-code.append(json_c['start_sensor']['base']['f0'])
-if remoteStore:
-    code.append(json_c['start_sensor']['remote_server']['f0'])
-code.append(json_c['start_sensor']['base']['f1'])
-if remoteStore:
-    code.append(json_c['start_sensor']['remote_server']['f1'])
-code.append(json_c['start_sensor']['base']['f2'])
-if period > 0:
-    code.append(json_c['start_sensor']['base']['f3'])
-code.append(json_c['start_sensor']['base']['f4'])
-
-if remoteStore:
-    for a in json_c['credentials']:
-        code.append(json_c['credentials'][a])
-
-code.append(json_c['setup']['init'])
-if captivePortal:
-    code.append(json_c['setup']['portal'])
-code.append(json_c['setup']['end'])
-
-code.append(json_c['loop']['init'])
-if captivePortal:
-    code.append(json_c['loop']['portal'])
+code.append(json_c['base']['functions']['loop']["init"])
+if flags["remote_store"]:
+    code.append(json_c['extra']['remote_store']['loop']['l0'])
 else:
-    code.append(json_c['loop']['noPortal'])
-code.append(json_c['loop']['end'])
+    code.append(json_c['base']['functions']['loop']["body"])
+code.append(json_c['base']['functions']['loop']["end"])
 
 print("Answers collected!")
 
-all = {"libraries":libraries, "constants":constants, "codeVars":codeVars, "settings":settings, "code":code}
+all = {"libraries":libraries, "codeVars":codeVars, "settings":settings, "code":code}
 y = json.dumps(all)
 y = json.loads(y)
 
