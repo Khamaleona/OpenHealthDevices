@@ -14,12 +14,12 @@ lang = ""
 main = False
 flags = {}
 
-if len(sys.argv) == 2: # and len(json_gq['language']) > 1:
+if len(sys.argv) == 2:
     lang = str(sys.argv[1]) #storing language
     generalQ = "./questions.json"
     sensorQ = "./Devices/Temperature/questions_sensor.json"
     sensorCode = "./Devices/Temperature/code_sensor.json"
-    template = "sensor-template.ino"
+    template = "sensor-template.txt"
     uploadPy = "./uploadGeneration.py"
     main = True
 
@@ -27,7 +27,7 @@ else:
     generalQ = "../../questions.json"
     sensorQ = "./questions_sensor.json"
     sensorCode = "./code_sensor.json"
-    template = "sensor-template.ino"
+    template = "sensor-template.txt"
     uploadPy = "../../uploadGeneration.py"
 
 with open(generalQ) as json_file:
@@ -149,6 +149,8 @@ code.append(json_c['base']['functions']['start_sensor']["f1"])
 if flags["remote_store"]:
     code.append(json_c['extra']['remote_store']['start_sensor']['f1'])
     code.append(json_c['base']['functions']['start_sensor']["f2"])
+else:
+    code.append(json_c['base']['functions']['start_sensor']["f2"])
 if flags["period"] > 0:
     code.append(json_c['base']['functions']['start_sensor']["f3"])
 code.append(json_c['base']['functions']['start_sensor']["f4"])
@@ -156,10 +158,14 @@ code.append(json_c['base']['functions']['start_sensor']["f4"])
 code.append(json_c['base']['functions']['setup']["init"])
 if flags["remote_store"]:
     code.append(json_c['extra']['remote_store']['setup']['s0'])
+if flags["captive_portal"]:
+    code.append(json_c['extra']['remote_store']['setup']['s1'])
+else:
+    code.append(json_c['extra']['remote_store']['setup']['s2'])
 code.append(json_c['base']['functions']['setup']["end"])
 
 code.append(json_c['base']['functions']['loop']["init"])
-if flags["remote_store"]:
+if flags["remote_store"] and flags['captive_portal']:
     code.append(json_c['extra']['remote_store']['loop']['l0'])
 else:
     code.append(json_c['base']['functions']['loop']["body"])
@@ -171,7 +177,7 @@ all = {"libraries":libraries, "codeVars":codeVars, "settings":settings, "code":c
 y = json.dumps(all)
 y = json.loads(y)
 
-outputFileName = "M5StickC_TMP117_generated.ino"
+outputFileName = "OpenHealthDevices-master.ino"
 if main:
     result = jinja2.Environment(loader=jinja2.FileSystemLoader('./')).get_template(template)
 else:
