@@ -5,7 +5,7 @@ Repository created to store code related to Open Health Devices developed with A
 <ul>
   <li>Devices Folder</li>
   <li>questions.json</li>
-  <li>sensor-template.ino</li>
+  <li>sensor-template.txt</li>
   <li>main.py</li>
   <li>tools.py</li>
   <li>uploadGeneration.py</li>
