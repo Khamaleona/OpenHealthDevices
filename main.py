@@ -37,7 +37,10 @@ for sensor in os.listdir("./Devices"):
     with open('./Devices/'+sensor+'/questions_sensor.json') as json_file:
         json_q = json.load(json_file)
         sensors.append(sensor)
-        print(str(i) + ") " + json_q['language'][lang]['code_questions']['info']['name'])
+        if lang in json_q['language']:
+            print(str(i) + ") " + json_q['language'][lang]['info']['name'])
+        else:
+            print(str(i) + ") " + json_q['language']['en']['info']['name'])
     i += 1
 
 option = input(json_gq['sensors_list']['i0'])
