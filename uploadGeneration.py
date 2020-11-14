@@ -29,13 +29,13 @@ else:
         print("No available COM ports!")
         sys.exit(2)
     else:
+        arduinoFile = str(sys.argv[1])
         if platform == 0:
             for port in result:
                 print("\t- Port " + port + " available")
-            os.system('cmd /c "arduino-cli compile --fqbn esp32:esp32:m5stick-c "' + str(sys.argv[1]) +
-                      '" && arduino-cli upload -p "' + str(result[0]) + '" --fqbn esp32:esp32:m5stick-c "' +
-                      str(sys.argv[1]))
+            command = "arduino-cli compile --fqbn esp32:esp32:m5stick-c " + arduinoFile + " && arduino-cli upload -p " + str(result[0]) + " --fqbn esp32:esp32:m5stick-c " + arduinoFile
+            os.system('cmd /c "' + command + '"')
         else:
-            commands = ["arduino-cli compile --fqbn esp32:esp32:m5stick-c "+str(sys.argv[1]), "arduino-cli upload -p "+ str(result[0]) + " --fqbn esp32:esp32:m5stick-c " + str(sys.argv[1])]
+            commands = ["arduino-cli compile --fqbn esp32:esp32:m5stick-c "+arduinoFile, "arduino-cli upload -p "+ str(result[0]) + " --fqbn esp32:esp32:m5stick-c " + arduinoFile]
             for command in commands:
                 os.system(command)
