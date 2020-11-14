@@ -22,8 +22,8 @@
     "functions": {
       "start_sensor": {
         "f0": "void startSensor(){ \n\tuint8_t value = 0; \n\tuint8_t oxygen = 0;\n",
-        "f1": "\tSerial.println(\"Starting MAX30100...\"); \n\tif(!pox.begin()){ \n\t\tSerial.println(\"MAX30100 ERROR\"); \n\t}else{\n\t\tSerial.println(\"MAX30100 OK\"); \n\t} \n\tint initial = millis(); \n\tpox.update(); \n\tif(millis() - tsLastReport>REPORTING_PERIOD_MS){ \n\t\t while(millis() - initial <= 20000){ \n\t\t\tvalue = pox.getHeartRate(); \n\t\t\toxygen = pox.getSpO2(); \n\t\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\t\tM5.Lcd.setTextSize(2); \n\t\t\tM5.Lcd.printf(\"HR: %d bpm\\n\", (int) valor); \n\t\t\tM5.Lcd.printf(\"SpO2: %d%%\", (int) oxygen); \n\t\t\tpox.update(); \n\t\t} \n",
-        "f2": "\t\tsLastReport = millis(); \n\t\tpox.update(); \n\t} \n",
+        "f1": "\tSerial.println(\"Starting MAX30100...\"); \n\tif(!pox.begin()){ \n\t\tSerial.println(\"MAX30100 ERROR\"); \n\t}else{\n\t\tSerial.println(\"MAX30100 OK\"); \n\t} \n\tint initial = millis(); \n\tpox.update(); \n\tif(millis() - tsLastReport>REPORTING_PERIOD_MS){ \n\t\t while(millis() - initial <= 20000){ \n\t\t\tvalue = pox.getHeartRate(); \n\t\t\toxygen = pox.getSpO2(); \n\t\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\t\tM5.Lcd.setTextSize(2); \n\t\t\tM5.Lcd.printf(\"HR: %d bpm\\n\", (int) value); \n\t\t\tM5.Lcd.printf(\"SpO2: %d%%\", (int) oxygen); \n\t\t\tpox.update(); \n\t\t} \n",
+        "f2": "\t\ttsLastReport = millis(); \n\t\tpox.update(); \n\t} \n",
         "f3": "\tesp_sleep_enable_timer_wakeup((TIME_TO_SLEEP-20) * uS_TO_S_FACTOR); \n\tSerial.println(\"ESP32 is going to sleep \" + String(TIME_TO_SLEEP) + \" secods...\"); \n\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\tM5.Lcd.setCursor(0, 6, 2); \n\tM5.Lcd.setTextColor(WHITE, BLACK); \n\tM5.Lcd.setTextSize(2); \n\tM5.Lcd.printf(\"Sleeping...\"); \n\tM5.Lcd.fillScreen(BLACK); \n\tSerial.flush(); \n\tesp_deep_sleep_start(); \n",
         "f4": "}"
       },
@@ -61,10 +61,12 @@
       },
       "start_sensor": {
         "f0": "\tconfigTime(gmtOffset_sec, daylightOffset_sec, ntpServer); \n\tprintLocalTime(); \n",
-        "f1": "\t\tif(wifiStatus){ \n\t\t\tsendData(valor, oxygen, timeStringBuff); \n\t\t}else{ \n\t\t\tSerial.println(\"Wifi is disconnected!\"); \n\t\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\t\tM5.Lcd.setTextSize(2); \n\t\t\tM5.Lcd.printf(\"Wifi is OFF\"); \n\t\t} \n"
+        "f1": "\t\tif(wifiStatus){ \n\t\t\tsendData(value, oxygen, timeStringBuff); \n\t\t}else{ \n\t\t\tSerial.println(\"Wifi is disconnected!\"); \n\t\t\tM5.Lcd.fillScreen(BLACK);//Clear screen for the new message \n\t\t\tM5.Lcd.setCursor(0, 6, 2); \n\t\t\tM5.Lcd.setTextColor(WHITE, BLACK); \n\t\t\tM5.Lcd.setTextSize(2); \n\t\t\tM5.Lcd.printf(\"Wifi is OFF\"); \n\t\t} \n"
       },
       "setup": {
-        "s0": "\tif(loadCredentials()){ \n\t\tSerial.print(\"Connectiong to \"); \n\t\tSerial.println(ssid); \n\t\twifiDisconnect(); \n\t\twifiConnect(15); \n\t\tif(wifiStatus){ \n\t\t\tSerial.println(\"\"); \n\t\t\tSerial.print(\"Connected to WiFi Network with IP Address: \"); \n\t\t\tSerial.println(WiFi.localIP()); \n\t\t\tHTTPClient http; \n\t\t\thttp.begin(serverName); \n\t\t\tint response = http.GET(); \n\t\t\tif(response == 200){ \n\t\t\t\thttp.end(); \n\t\t\t\tstartSensor(); \n\t\t\t}else{ \n\t\t\t\tstartCaptivePortal(); \n\t\t\t\tportalStarted = true; \n\t\t\t} \n\t\t}else{ \n\t\t\tstartCaptivePortal(); \n\t\t\tportalStarted = true; \n\t\t} \n\t}else{ \n\t\t//No credentials, then start Captive Portal \n\t\tstartCaptivePortal(); \n\t\tportalStarted = true; \n\t}"
+        "s0": "\tif(loadCredentials()){ \n\t\tSerial.print(\"Connectiong to \"); \n\t\tSerial.println(ssid); \n\t\twifiDisconnect(); \n\t\twifiConnect(15); \n\t\tif(wifiStatus){ \n\t\t\tSerial.println(\"\"); \n\t\t\tSerial.print(\"Connected to WiFi Network with IP Address: \"); \n\t\t\tSerial.println(WiFi.localIP()); \n\t\t\tHTTPClient http; \n\t\t\thttp.begin(serverName); \n\t\t\tint response = http.GET(); \n\t\t\tif(response == 200){ \n\t\t\t\thttp.end(); \n\t\t\t\tstartSensor(); \n\t\t\t}",
+        "s1": "\n\t\t\telse{ \n\t\t\t\tstartCaptivePortal(); \n\t\t\t\tportalStarted = true; \n\t\t\t} \n\t\t}else{ \n\t\t\tstartCaptivePortal(); \n\t\t\tportalStarted = true; \n\t\t} \n\t}else{ \n\t\t//No credentials, then start Captive Portal \n\t\tstartCaptivePortal(); \n\t\tportalStarted = true; \n\t}",
+        "s2": "\n\t\t} \n\t}"
       },
       "loop": {
         "l0": "\tif(portalStarted){ \n\t\tdnsServer.processNextRequest(); \n\t\twebServer.handleClient(); \n\t}"
