@@ -17,7 +17,7 @@ elif sys.platform.startswith("linux") or sys.platform.startswith("cygwin"):
                 "arduino-cli core install esp32:esp32", "arduino-cli board listall esp32",
                 "arduino-cli lib install \"M5StickC\"",
                 "arduino-cli lib install \"SparkFun High Precision Temperature Sensor TMP117 Qwiic\"",
-                "arduino-cli lib install \"MAX30100lib\"", "pip install Jinja2"]
+                "arduino-cli lib install \"MAX30100lib\"", "pip install Jinja2", "pip install pyserial"]
     for command in commands:
         os.system(command)
 else:
