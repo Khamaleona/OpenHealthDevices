@@ -97,9 +97,9 @@
       "vars": {
         "comment": "/////Captive Portal Settings",
         "cp0": "bool portalStarted = false;",
-        "cp1": "const char * softAP_ssid = \"Captive Portal SSID\";",
-        "cp2": "const char * softAP_password = \"Captive Portal Pass\";",
-        "cp3": "const char * myHostname = \"Captive Portal Hostname\";",
+        "cp1": "const char * softAP_ssid = \"ESP32wiFi\";",
+        "cp2": "const char * softAP_password = \"tfm2020\";",
+        "cp3": "const char * myHostname = \"CaptivePortal\";",
         "cp4": "const byte DNS_PORT = 53;",
         "cp5": "IPAddress apIP(8, 8, 8, 8);",
         "cp6": "IPAddress netMsk(255, 255, 255, 0);",
