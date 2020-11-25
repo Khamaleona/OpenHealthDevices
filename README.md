@@ -52,11 +52,12 @@ To do this, we need to execute the following commands:
 <h3>Arduino-CLI Installation</h3>
 
 <h4>Windows</h4>
-Again, we need to download the executable file from the Downloads web page and unzip it in a folder called "Arduino-CLI". Now, we must add the executable file path to the PATH environment variable. Once it is done, we can verify the installation openning a terminal and typing the `arduino-cli` command. 
+Again, we need to download the executable file from the Downloads web page and unzip it in a folder called "Arduino-CLI". Now, we must add the executable file path to the PATH environment variable. Once it is done, we can verify the installation openning a terminal and typing the arduino-cli command. 
 
 <h4>Linux</h4>
-As we did before, we need to run the following command to install Arduino-CLI in Linux systems. 
-<br>```curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh```
+As we did before, we need to run the following command to install Arduino-CLI in Linux systems.
+
+```curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh```
 
 Once you have those two installed, we can start the party. 
 
