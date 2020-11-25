@@ -17,22 +17,48 @@ Repository created to store code related to Open Health Devices developed with A
 
 In order to make easier the task to build medical devices at home, we have developed this project for those users who are unfamiliar with programming and electronics. Usually, to build such devices we work with <a href="https://www.arduino.cc/en/Guide/Introduction">Arduino</a> components and its own <a href="https://www.arduino.cc/en/Main/Software">IDE</a> to create code files. 
 
-What happens if you are a technological unexperienced user? What happens if you do not know how to program or even build a simple circuit? Don't panic, here we have the solution. 
-
-We have written three Python scripts that will help you, the only thing you have to do is follow the instructions. 
+What happens if you are a technological unexperienced user? What happens if you do not know how to program or even build a simple circuit? Don't panic, here we have the solution. The only thing you have to do is follow the instructions. 
 
 <hr>
 
 <h2>Prerequisites</h2>
 
-First of all, you need to install a few elements, but do not worry, it will be easy. 
+First of all, you need to install a few elements: <a href="https://www.python.org/downloads/">Python</a> and <a href="https://arduino.github.io/arduino-cli/installation/">Arduino-CLI</a>.
 
-<ul>
-  <li><a href="https://www.python.org/downloads/">Python</a></li>
-  <li><a href="https://arduino.github.io/arduino-cli/installation/">Arduino-CLI</a></li>
-</ul>
+<h3>Python Installation</h3>
 
-Once you have those two, we can start the party. 
+<h4>Windows</h4>
+The first step is to download the Python installer from its web page. Once we get it, we will execute it by double clicking on it. We just need to follow the installer instructions and check that the "Add Python to PATH" option is activated during the process. 
+
+<h4>Linux</h4>
+To do this, we need to execute the following commands:
+1) First, we will install essential packages for compiling source code.
+```sudo apt install build-essential checkinstall```
+```sudo apt install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev```
+
+2) Then, we will download the Python 3.9 source code from the official download site. 
+```cd /opt``` 
+```sudo wget https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz```
+
+3) Next, we will extract the downloaded source code and start the installation.
+```tar xzf Python-3.9.0.tgz```
+```cd Python-3.9.0```
+```sudo ./configure --enable-optimizations```
+
+4) Now, everything is ready to install.
+```sudo make altinstall```
+
+<h3>Arduino-CLI Installation</h3>
+
+<h4>Windows</h4>
+Again, we need to download the executable file from the Downloads web page and unzip it in a folder called "Arduino-CLI". Now, we must add the executable file path to the PATH environment variable. Once it is done, we can verify the installation openning a terminal and typing the ```arduino-cli``` command. 
+
+<h4>Linux</h4>
+As we did before, we need to run the following command to install Arduino-CLI in Linux systems. 
+
+```curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh```
+
+Once you have those two installed, we can start the party. 
 
 <hr>
 
@@ -47,7 +73,7 @@ As you can see, there is a folder called "Devices" where we have added the sourc
   <li><b>General: </b>It represents the main scheme suitable for every sensor.</li>
 </ol>
 
-Inside each sensor folder you will find an image that shows the circuit scheme and the Arduino code file (.ino). Those files contains all the functionality you would need if you wanted to collect their measurements and store them into a web server. What happens if you want a simpler behaviour? Maybe you just want to read the measures and display them. We have already thought about it. 
+Inside each sensor folder (we will call them <i>Modules</i>) you will find an image that shows the circuit scheme and the Arduino code file (.ino). Those files contains all the functionality you would need if you wanted to collect their measurements and store them into a web server. What happens if you want a simpler behaviour? Maybe you just want to read the measures and display them. We have already thought about it. 
 
 Remember <b>main.py</b> file we have mentioned before? Here we have implemented everything. Inside each sensor folder, you can find <b>code_sensor.json</b> and <b>questions_sensor.json</b> files. They contain every piece of code necessary to generate your selected sensor. You can execute them using main.py file or codeGeneration.py (it is inside the sensor folder). It will ask you the details of your device and at the end, it will generate the <i>.ino</i> file that we will upload to the board later. These are the steps you need to follow to perform everything successfully:
 
