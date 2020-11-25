@@ -33,20 +33,20 @@ The first step is to download the Python installer from its web page. Once we ge
 <h4>Linux</h4>
 To do this, we need to execute the following commands:
 1) First, we will install essential packages for compiling source code.
-```sudo apt install build-essential checkinstall```
-```sudo apt install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev```
+<br>```sudo apt install build-essential checkinstall```
+<br>```sudo apt install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev```
 
 2) Then, we will download the Python 3.9 source code from the official download site. 
-```cd /opt``` 
-```sudo wget https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz```
+<br>```cd /opt``` 
+<br>```sudo wget https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz```
 
 3) Next, we will extract the downloaded source code and start the installation.
-```tar xzf Python-3.9.0.tgz```
-```cd Python-3.9.0```
-```sudo ./configure --enable-optimizations```
+<br>```tar xzf Python-3.9.0.tgz```
+<br>```cd Python-3.9.0```
+<br>```sudo ./configure --enable-optimizations```
 
 4) Now, everything is ready to install.
-```sudo make altinstall```
+<br>```sudo make altinstall```
 
 <h3>Arduino-CLI Installation</h3>
 
@@ -56,7 +56,7 @@ Again, we need to download the executable file from the Downloads web page and u
 <h4>Linux</h4>
 As we did before, we need to run the following command to install Arduino-CLI in Linux systems. 
 
-```curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh```
+<br>```curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh```
 
 Once you have those two installed, we can start the party. 
 
