@@ -32,6 +32,7 @@ The first step is to download the Python installer from its web page. Once we ge
 
 <h4>Linux</h4>
 To do this, we need to execute the following commands:
+
 1) First, we will install essential packages for compiling source code.
 <br>```sudo apt install build-essential checkinstall```
 <br>```sudo apt install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev```
